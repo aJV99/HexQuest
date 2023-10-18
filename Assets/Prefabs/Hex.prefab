@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 8390813676603296832}
   - component: {fileID: 477621235487496722}
   - component: {fileID: 5081556891635662421}
-  m_Layer: 0
+  - component: {fileID: -4301376969235491062}
+  m_Layer: 6
   m_Name: Hex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,3 +82,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 345ff90099ae80b4da5d3bd4ec02d1b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  highlight: {fileID: 0}
+--- !u!114 &-4301376969235491062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1132222864503376067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a54b3549239724546b844571e28bd3b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  glowMaterial: {fileID: 2100000, guid: 8e730610f60a5414a8002da292f37d21, type: 2}
