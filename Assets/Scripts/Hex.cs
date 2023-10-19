@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,6 +45,16 @@ public class Hex : MonoBehaviour
     public void DisableHighlight()
     {
         highlight.ToggleGlow(false);
+    }
+
+    internal void ResetHighlight()
+    {
+        highlight.ResetGlowHighlight();
+    }
+
+    internal void HighlightPath()
+    {
+        highlight.HighlightValidPath();
     }
 }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,6 +45,11 @@ public class HexGrid : MonoBehaviour
         return hexTileNeighboursDict[hexCoordinates];
     }
 
+    public Vector3Int GetClosesHex(Vector3 worldposition)
+    {
+        worldposition.y = 0;
+        return HexCoordinates.ConvertPositionToOffset(worldposition);
+    }
 }
 
 public static class Direction
