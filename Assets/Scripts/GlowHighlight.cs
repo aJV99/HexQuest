@@ -36,7 +36,7 @@ public class GlowHighlight : MonoBehaviour
                 {
                     mat = new Material(glowMaterial);
                     mat.color= originMaterials[i].color;
-                    cachedGlowMaterials.Add(originMaterials[i].color, mat);
+                    cachedGlowMaterials[mat.color]= mat;
                 }
                 newMaterials[i] = mat;
             }
