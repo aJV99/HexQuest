@@ -21,9 +21,12 @@ public class MovementSystem : MonoBehaviour
     public void ShowRange(unit selectedUnit, HexGrid hexGrid)
     {
         CalculateRange(selectedUnit, hexGrid);
+        //Vector3Int unitPos = hexGrid.GetClosestHex(selectedUnit.transform.position);
 
         foreach (Vector3Int hexPosition in movementRange.GetRangePositions())
         {
+            //if (unitPos == hexPosition)
+            //    continue;
             hexGrid.GetTileAt(hexPosition).EnableHighlight();
         }
     }
