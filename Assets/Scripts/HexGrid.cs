@@ -45,7 +45,7 @@ public class HexGrid : MonoBehaviour
         return hexTileNeighboursDict[hexCoordinates];
     }
 
-    public Vector3Int GetClosesHex(Vector3 worldposition)
+    public Vector3Int GetClosestHex(Vector3 worldposition)
     {
         worldposition.y = 0;
         return HexCoordinates.ConvertPositionToOffset(worldposition);

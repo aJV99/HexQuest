@@ -22,7 +22,7 @@ public class GlowHighlight : MonoBehaviour
     private void Awake()
     {
         PrepareMaterialDictionaries();
-        originalGlowColor = glowMaterial.GetColor("_GlowColor");
+        originalGlowColor = glowMaterial.GetColor("GlowColor");
     }
 
     private void PrepareMaterialDictionaries()
@@ -58,22 +58,18 @@ public class GlowHighlight : MonoBehaviour
         {
             foreach (Material item in glowMaterialDictionary[renderer])
             {
-                item.SetColor("_GlowColor", validSpaceColor);
+                item.SetColor("GlowColor", validSpaceColor);
             }
         }
     }
 
     internal void ResetGlowHighlight()
     {
-        if (isGlowing == false)
-        {
-            return;
-        }
         foreach(Renderer renderer in glowMaterialDictionary.Keys)
         {
             foreach(Material item in glowMaterialDictionary[renderer])
             {
-                item.SetColor("_GlowColor", originalGlowColor);
+                item.SetColor("GlowColor", originalGlowColor);
             }
         }
     }
@@ -82,6 +78,7 @@ public class GlowHighlight : MonoBehaviour
     {
         if (isGlowing == false)
         {
+            ResetGlowHighlight();
             foreach (Renderer renderer in originalMaterialDictionary.Keys)
             {
                 renderer.materials = glowMaterialDictionary[renderer];

@@ -93,7 +93,7 @@ public class UnitManager : MonoBehaviour
 
     private bool HandleSelectedHexIsUnitHex(Vector3Int hexPosition)
     {
-        if(hexPosition == hexGrid.GetClosesHex(selectedUnit.transform.position))
+        if(hexPosition == hexGrid.GetClosestHex(selectedUnit.transform.position))
         {
             selectedUnit.Deselect();
             ClearOldSelection();
