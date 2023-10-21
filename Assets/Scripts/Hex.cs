@@ -11,7 +11,7 @@ public class Hex : MonoBehaviour
     private HexCoordinates hexCoordinates;
 
     [SerializeField]
-    private HexType hexType;
+    public HexType hexType;
 
     public Vector3Int HexCoords => hexCoordinates.GetHexCoords();
 
@@ -65,5 +65,6 @@ public enum HexType
     Difficult,
     Road,
     Water,
-    Obstacle
+    Obstacle,
+    Enemy
 }

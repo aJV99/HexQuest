@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 [SelectionBase]
 
@@ -9,6 +12,7 @@ public class unit : MonoBehaviour
 {
     private int movementPoints = 20; //movement points of our movement
 
+    public int currentPower = 100; //power of character
     public int MovementPoints { get => movementPoints; } //gets this amount when planning path 
 
     [SerializeField]
@@ -90,6 +94,23 @@ public class unit : MonoBehaviour
         {
             Debug.Log("Movement Finished");
             MovementFinished?.Invoke(this);
+            Attack();
+        }
+    }
+
+
+
+    public void Attack()
+    {
+        var enemy = GameObject.FindAnyObjectByType<Enemy>();
+        if (transform.position == enemy.transform.position)
+        {
+            enemy.TakeDamage(currentPower);
+
+        }
+        else
+        {
+            Debug.Log("No Enemy here");
         }
     }
 
