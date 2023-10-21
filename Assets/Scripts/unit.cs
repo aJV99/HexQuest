@@ -5,6 +5,7 @@ using System.Diagnostics.Tracing;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.EventSystems.EventTrigger;
 
 [SelectionBase]
 
@@ -13,6 +14,8 @@ public class unit : MonoBehaviour
     private int movementPoints = 20; //movement points of our movement
 
     public int currentPower = 100; //power of character
+
+    public int gold = 0; //currency of player
     public int MovementPoints { get => movementPoints; } //gets this amount when planning path 
 
     [SerializeField]
@@ -102,16 +105,20 @@ public class unit : MonoBehaviour
 
     public void Attack()
     {
-        var enemy = GameObject.FindAnyObjectByType<Enemy>();
-        if (transform.position == enemy.transform.position)
+        Enemy[] enemies = GameObject.FindObjectsOfType<Enemy>();
+        for(int i = 0; i< enemies.Length; i++)
         {
-            enemy.TakeDamage(currentPower);
+            if (transform.position == enemies[i].transform.position)
+            {
+                enemies[i].TakeDamage(currentPower);
 
+            }
+            else
+            {
+                Debug.Log("No Enemy here");
+            }
         }
-        else
-        {
-            Debug.Log("No Enemy here");
-        }
+
     }
 
 }

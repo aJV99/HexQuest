@@ -87,7 +87,14 @@ public class UnitManager : MonoBehaviour
             movementSystem.MoveUnit(selectedUnit, this.hexGrid);
             PlayersTurn = false;
             selectedUnit.MovementFinished += ResetTurn;
+            if(selectedHex.hexType is HexType.gold)
+            {
+                this.selectedUnit.gold += 50;
+                Debug.Log("Gold");
+                selectedHex.hexType = HexType.Default;
+            }
             ClearOldSelection();
+
         }
     }
 

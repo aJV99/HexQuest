@@ -22,6 +22,7 @@ public class Hex : MonoBehaviour
         HexType.Difficult => 20,
         HexType.Default => 10,
         HexType.Road => 5,
+        HexType.gold => 10,
         _ => throw new System.Exception($"Hex of type {hexType} not supported")
 
     };
@@ -66,5 +67,5 @@ public enum HexType
     Road,
     Water,
     Obstacle,
-    Enemy
+    gold
 }

@@ -11,9 +11,9 @@ public class PowerUI : MonoBehaviour
     
 
     public Text ValueText;
-    void Start()
+    void Update()
     {
         var player = GameObject.FindAnyObjectByType<unit>();
-        ValueText.text += player.currentPower.ToString();
+        ValueText.text = "Power: " + player.currentPower.ToString() + " Gold: " + player.gold.ToString();
     }
 }
