@@ -9099,7 +9099,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 304, y: 205}
+  m_AnchoredPosition: {x: 304, y: 190}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &1029842136 stripped
@@ -10074,7 +10074,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5081556891635662421, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: hexType
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6384707004979347832, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -12529,6 +12529,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 4a5d77bbee5403244b3bd762d1037e27, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: afcd1c34c7476f941b4cc78c624e68f8, type: 2}
     - target: {fileID: 919132149155446097, guid: 4a5d77bbee5403244b3bd762d1037e27, type: 3}
       propertyPath: m_Name
       value: hex
@@ -16552,7 +16556,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5081556891635662421, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: hexType
-      value: 1
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6384707004979347832, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: m_LocalPosition.x
