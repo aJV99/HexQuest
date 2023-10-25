@@ -108,9 +108,10 @@ public class unit : MonoBehaviour
         Enemy[] enemies = GameObject.FindObjectsOfType<Enemy>();
         for(int i = 0; i< enemies.Length; i++)
         {
-            if (transform.position == enemies[i].transform.position)
+            if (transform.position.x == enemies[i].transform.position.x && transform.position.z == enemies[i].transform.position.z)
             {
                 enemies[i].TakeDamage(currentPower);
+                this.currentPower -= enemies[i].power;
 
             }
             else

@@ -89,9 +89,9 @@ public class UnitManager : MonoBehaviour
             selectedUnit.MovementFinished += ResetTurn;
             if(selectedHex.hexType is HexType.gold)
             {
+                selectedHex.hexType = HexType.Default;
                 this.selectedUnit.gold += 50;
                 Debug.Log("Gold");
-                selectedHex.hexType = HexType.Default;
             }
             ClearOldSelection();
 

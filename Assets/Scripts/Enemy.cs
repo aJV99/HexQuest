@@ -7,7 +7,7 @@ using TMPro;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    private int power;
+    public int power;
 
     [SerializeField]
     private GameObject FloatingTextPrefab;
@@ -20,8 +20,9 @@ public class Enemy : MonoBehaviour
     }
     public void TakeDamage(int amount)
     {
-        this.power -= amount;
-        if (this.power <= 0)
+        int currentPower = this.power;
+        currentPower -= amount;
+        if (currentPower <= 0)
         {
             Die();
         }
@@ -37,7 +38,7 @@ public class Enemy : MonoBehaviour
     {
     
       this.FloatingTextPrefab.SetActive(true);
-      this.FloatingTextPrefab.GetComponent<TextMesh>().text = this.power.ToString();
+      this.FloatingTextPrefab.GetComponent<TextMesh>().text = "Enemy Power: " + this.power.ToString();
       this.FloatingTextPrefab.transform.LookAt(FloatingTextPrefab.transform.position - Camera.main.transform.position);
   
 
