@@ -98,6 +98,7 @@ public class unit : MonoBehaviour
             Debug.Log("Movement Finished");
             MovementFinished?.Invoke(this);
             Attack();
+            Collect_Coin();
         }
     }
 
@@ -120,6 +121,23 @@ public class unit : MonoBehaviour
             }
         }
 
+    }
+
+    public void Collect_Coin()
+    {
+        Coin[] coins = GameObject.FindObjectsOfType<Coin>();
+        for(int i=0; i < coins.Length; i++)
+        {
+            if (transform.position.x == coins[i].transform.position.x && transform.position.z == coins[i].transform.position.z)
+            {
+                this.gold += 50;
+                Destroy(coins[i].gameObject); //Delete coin from the screen
+            }
+            else
+            {
+                Debug.Log("No Gold Here");
+            }
+        }
     }
 
 }
