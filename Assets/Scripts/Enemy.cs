@@ -30,7 +30,7 @@ public class Enemy : MonoBehaviour
 
     private void Die()
     {
-        Destroy(this.gameObject);
+        this.gameObject.SetActive(false);
         Debug.Log("Enemy Destroyed");
     }
 
