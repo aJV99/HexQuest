@@ -38,7 +38,7 @@ public class Enemy : MonoBehaviour
     {
     
       this.FloatingTextPrefab.SetActive(true);
-      this.FloatingTextPrefab.GetComponent<TextMesh>().text = "Enemy Power: " + this.power.ToString();
+      this.FloatingTextPrefab.GetComponent<TextMeshPro>().text = "Enemy Power: " + this.power.ToString();
       this.FloatingTextPrefab.transform.LookAt(FloatingTextPrefab.transform.position - Camera.main.transform.position);
   
 
