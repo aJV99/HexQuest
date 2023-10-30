@@ -8,6 +8,12 @@ public class PopupManager : MonoBehaviour
     private GameObject popupPanel;
 
     [SerializeField]
+    private GameObject uiBar;
+
+    [SerializeField]
+    private GameObject notifPanel;
+
+    [SerializeField]
     private TextMeshProUGUI popupText;
 
     [SerializeField]
@@ -24,6 +30,9 @@ public class PopupManager : MonoBehaviour
         yesButton.onClick.AddListener(OnYesClicked);
         noButton.onClick.AddListener(OnNoClicked);
         ClosePopup();
+        uiBar.SetActive(true);
+        notifPanel.SetActive(true);
+
     }
 
     public void ShowPopup(string message, PopupResponse responseCallback)

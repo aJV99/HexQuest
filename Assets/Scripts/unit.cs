@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.Tracing;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,7 +14,7 @@ public class unit : MonoBehaviour
 {
     private int movementPoints = 20; //movement points of our movement
 
-    public int currentPower = 100; //power of character
+    public int currentPower = 10; //power of character
 
     public int gold = 0; //currency of player
 
@@ -26,6 +27,9 @@ public class unit : MonoBehaviour
     [SerializeField]
     private float movementDuration = 1, rotationDuration = .3f; //how long movement will take
 
+    [SerializeField]
+    private TextMeshProUGUI notifText;
+
     private GlowHighlight glowHighlight;//player glows so know it is selected
     private Queue<Vector3> pathPositions = new Queue<Vector3>();//give unit path it will travel
 
@@ -33,6 +37,7 @@ public class unit : MonoBehaviour
 
     private void Awake()
     {
+        notifText.gameObject.SetActive(false);
         glowHighlight = GetComponent<GlowHighlight>();
 
     }
@@ -110,23 +115,73 @@ public class unit : MonoBehaviour
 
 
 
+    private System.Random random = new System.Random();
+
     public void Attack()
     {
         Enemy[] enemies = GameObject.FindObjectsOfType<Enemy>();
-        for(int i = 0; i< enemies.Length; i++)
+        for (int i = 0; i < enemies.Length; i++)
         {
             if (transform.position.x == enemies[i].transform.position.x && transform.position.z == enemies[i].transform.position.z)
             {
-                enemies[i].TakeDamage(currentPower);
-                this.currentPower -= enemies[i].power;
+                double winProbability;
+                bool isPlayerWin;
+                int playerLosses, enemySurrenders;
 
+                // Simulate battle
+                SimulateBattle(currentPower, enemies[i].power, out winProbability, out isPlayerWin, out playerLosses, out enemySurrenders);
+
+                Debug.Log($"Player win chance: {winProbability:0.##}%");
+                Debug.Log($"Player won: {isPlayerWin}");
+                Debug.Log($"Player troop losses: {playerLosses}");
+                Debug.Log($"Enemy troops surrendered: {enemySurrenders}");
+
+                if (isPlayerWin)
+                {
+                    notifText.text = $"You DEFEATED the ENEMY!\r\nYou lost {playerLosses} troops: -{playerLosses} power.\r\n{enemySurrenders} enemy troops surrendered and joined your army: +{enemySurrenders} power.";
+                    notifText.gameObject.SetActive(true);
+                    enemies[i].TakeDamage(currentPower);
+                    this.currentPower += enemySurrenders - playerLosses;
+                }
+                else
+                {
+                    this.currentPower -= playerLosses;
+                }
             }
             else
             {
                 Debug.Log("No Enemy here");
             }
         }
+    }
 
+    private double WinningChance(double P, double E, double k = 0.5)
+    {
+        double ratioTerm = k * (P / E - 1);
+        double absoluteDifferenceTerm = k * (P - E) / (P + E);
+        return 50 * (1 + Math.Tanh(ratioTerm + absoluteDifferenceTerm));
+    }
+
+    private void SimulateBattle(double P, double E, out double C, out bool isPlayerWin, out int playerLosses, out int enemySurrenders, double k = 0.5, double lossFactor = 0.5, double surrenderFactor = 0.5)
+    {
+        C = WinningChance(P, E, k);
+        isPlayerWin = random.NextDouble() * 100 < C;
+
+        double absoluteDifferenceTerm = k * (P - E) / (P + E);
+
+        if (isPlayerWin)
+        {
+            playerLosses = (int)(P * (1 - C / 100) * lossFactor * (random.NextDouble() * 0.5 + 0.75));
+            double baseSurrenderRate = (C / 100) * surrenderFactor;
+            double additionalSurrenderRate = absoluteDifferenceTerm * 0.5;
+            double surrenderRate = Math.Min(baseSurrenderRate + additionalSurrenderRate, 1);
+            enemySurrenders = (int)(E * surrenderRate * (random.NextDouble() * 0.5 + 0.75));
+        }
+        else
+        {
+            playerLosses = (int)(P * lossFactor * (random.NextDouble() * 0.5 + 0.75));
+            enemySurrenders = 0;
+        }
     }
 
     public void Collect_Coin()
