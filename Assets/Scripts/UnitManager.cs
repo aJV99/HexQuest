@@ -10,6 +10,9 @@ public class UnitManager : MonoBehaviour
     [SerializeField]
     private MovementSystem movementSystem;
 
+    [SerializeField]
+    private PopupManager popupManager;
+
     public bool PlayersTurn { get; private set; } = true;
 
     [SerializeField]
@@ -77,24 +80,67 @@ public class UnitManager : MonoBehaviour
 
     private void HandleTargetHexSelected(Hex selectedHex)
     {
-        if(previouslySelectedHex == null || previouslySelectedHex != selectedHex)
+        if (previouslySelectedHex == null || previouslySelectedHex != selectedHex)
         {
             previouslySelectedHex = selectedHex;
             movementSystem.ShowPath(selectedHex.HexCoords, this.hexGrid);
         }
         else
         {
-            movementSystem.MoveUnit(selectedUnit, this.hexGrid);
-            PlayersTurn = false;
-            selectedUnit.MovementFinished += ResetTurn;
-            if(selectedHex.hexType is HexType.gold)
+            bool hasEnemy = selectedHex.transform.Find("Props/Enemy");
+            if (hasEnemy)
             {
-                selectedHex.hexType = HexType.Default;
-                this.selectedUnit.gold += 50;
-                Debug.Log("Gold");
-            }
-            ClearOldSelection();
+                Enemy enemyComponent = selectedHex.transform.GetComponentInChildren<Enemy>();
+                if (enemyComponent != null && enemyComponent.gameObject.activeInHierarchy)
+                {
+                    popupManager.ShowPopup("Enemy Power: " + enemyComponent.power, (bool isConfirmed) =>
+                    {
+                        if (!isConfirmed)
+                        {
+                            Debug.Log("Popup -> NO");
+                            return;
+                        }
+                        Debug.Log("Popup -> YES");
 
+                        movementSystem.MoveUnit(selectedUnit, this.hexGrid);
+                        PlayersTurn = false;
+                        selectedUnit.MovementFinished += ResetTurn;
+                        if (selectedHex.hexType is HexType.gold)
+                        {
+                            selectedHex.hexType = HexType.Default;
+                            this.selectedUnit.gold += 50;
+                            Debug.Log("Gold");
+                        }
+                        ClearOldSelection();
+                    });
+                }
+                else
+                {
+                    movementSystem.MoveUnit(selectedUnit, this.hexGrid);
+                    PlayersTurn = false;
+                    selectedUnit.MovementFinished += ResetTurn;
+                    if (selectedHex.hexType is HexType.gold)
+                    {
+                        selectedHex.hexType = HexType.Default;
+                        this.selectedUnit.gold += 50;
+                        Debug.Log("Gold");
+                    }
+                    ClearOldSelection();
+                }
+            }
+            else
+            {
+                movementSystem.MoveUnit(selectedUnit, this.hexGrid);
+                PlayersTurn = false;
+                selectedUnit.MovementFinished += ResetTurn;
+                if (selectedHex.hexType is HexType.gold)
+                {
+                    selectedHex.hexType = HexType.Default;
+                    this.selectedUnit.gold += 50;
+                    Debug.Log("Gold");
+                }
+                ClearOldSelection();
+            }
         }
     }
 
