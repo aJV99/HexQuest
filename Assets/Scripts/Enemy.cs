@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
 
     public void Start()
     {
-        this.FloatingTextPrefab.transform.position = new Vector3(this.transform.position.x, 4, this.transform.position.z); 
+        this.FloatingTextPrefab.transform.position = new Vector3(this.transform.position.x, 3, this.transform.position.z); 
         
     }
     public void TakeDamage(int amount)
