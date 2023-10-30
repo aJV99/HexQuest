@@ -16,6 +16,11 @@ public class unit : MonoBehaviour
     public int currentPower = 100; //power of character
 
     public int gold = 0; //currency of player
+
+    public int currentTurns = 3; //how many turns to move a player has
+
+    public int maxTurns = 5; //the maximum of turns player will have after tavern
+
     public int MovementPoints { get => movementPoints; } //gets this amount when planning path 
 
     [SerializeField]
@@ -99,6 +104,7 @@ public class unit : MonoBehaviour
             MovementFinished?.Invoke(this);
             Attack();
             Collect_Coin();
+            Visit_Tavern();
         }
     }
 
@@ -137,6 +143,25 @@ public class unit : MonoBehaviour
             else
             {
                 Debug.Log("No Gold Here");
+            }
+        }
+    }
+
+    public void Visit_Tavern()
+    {
+        Tavern[] taverns = GameObject.FindObjectsOfType<Tavern>();
+        for (int i = 0; i < taverns.Length; i++)
+        {
+
+            if ((transform.position.x == (taverns[i].transform.position.x)) && transform.position.z == taverns[i].transform.position.z && gold >= 10)
+            {
+                this.gold -= 10;
+                this.currentTurns = this.maxTurns;
+                //coins[i].gameObject.SetActive(false); //Delete coin from the screen
+            }
+            else
+            {
+                Debug.Log("You cannot enter this tavern");
             }
         }
     }
