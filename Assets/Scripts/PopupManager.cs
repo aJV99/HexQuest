@@ -1,11 +1,15 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class PopupManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject popupPanel;
+
+    [SerializeField]
+    private GameObject lossPanel;
 
     [SerializeField]
     private GameObject uiBar;
@@ -14,13 +18,19 @@ public class PopupManager : MonoBehaviour
     private GameObject notifPanel;
 
     [SerializeField]
-    private TextMeshProUGUI popupText;
+    public TextMeshProUGUI popupText;
 
     [SerializeField]
-    private Button yesButton;
+    public TextMeshProUGUI loseText;
 
     [SerializeField]
-    private Button noButton;
+    public Button yesButton;
+
+    [SerializeField]
+    public Button noButton;
+
+    [SerializeField]
+    public Button quitButton;
 
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
@@ -29,6 +39,7 @@ public class PopupManager : MonoBehaviour
     {
         yesButton.onClick.AddListener(OnYesClicked);
         noButton.onClick.AddListener(OnNoClicked);
+        quitButton.onClick.AddListener(OnQuitClicked);
         ClosePopup();
         uiBar.SetActive(true);
         notifPanel.SetActive(true);
@@ -42,6 +53,12 @@ public class PopupManager : MonoBehaviour
         popupPanel.SetActive(true);
     }
 
+    public void ShowLossPopup(string message)
+    {
+        loseText.text = message;
+        lossPanel.SetActive(true);
+    }
+
     private void OnYesClicked()
     {
         callback?.Invoke(true);
@@ -52,6 +69,10 @@ public class PopupManager : MonoBehaviour
     {
         callback?.Invoke(false);
         ClosePopup();
+    }
+    private void OnQuitClicked()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     private void ClosePopup()

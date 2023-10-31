@@ -30,6 +30,9 @@ public class unit : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI notifText;
 
+    [SerializeField]
+    private PopupManager popupManager;
+
     private GlowHighlight glowHighlight;//player glows so know it is selected
     private Queue<Vector3> pathPositions = new Queue<Vector3>();//give unit path it will travel
 
@@ -140,12 +143,18 @@ public class unit : MonoBehaviour
                 {
                     notifText.text = $"You DEFEATED the ENEMY!\r\nYou lost {playerLosses} troops: -{playerLosses} power.\r\n{enemySurrenders} enemy troops surrendered and joined your army: +{enemySurrenders} power.";
                     notifText.gameObject.SetActive(true);
-                    enemies[i].TakeDamage(currentPower);
+                    enemies[i].gameObject.SetActive(false);
                     this.currentPower += enemySurrenders - playerLosses;
                 }
                 else
                 {
                     this.currentPower -= playerLosses;
+                    if (this.currentPower <= 0)
+                    {
+                        popupManager.ShowLossPopup("You Lose");
+
+
+                    }
                 }
             }
             else
@@ -179,7 +188,7 @@ public class unit : MonoBehaviour
         }
         else
         {
-            playerLosses = (int)(P * lossFactor * (random.NextDouble() * 0.5 + 0.75));
+            playerLosses = 10; //(int)(P * lossFactor * (random.NextDouble() * 0.5 + 0.75));
             enemySurrenders = 0;
         }
     }

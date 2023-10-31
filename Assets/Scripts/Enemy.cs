@@ -18,21 +18,6 @@ public class Enemy : MonoBehaviour
         this.FloatingTextPrefab.transform.position = new Vector3(this.transform.position.x, 3, this.transform.position.z); 
         
     }
-    public void TakeDamage(int amount)
-    {
-        int currentPower = this.power;
-        currentPower -= amount;
-        if (currentPower <= 0)
-        {
-            Die();
-        }
-    }
-
-    private void Die()
-    {
-        this.gameObject.SetActive(false);
-        Debug.Log("Enemy Destroyed");
-    }
 
     private void OnMouseOver()
     {
