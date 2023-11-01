@@ -33,6 +33,14 @@ public class unit : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
+    public Image battleImage;
+    public float displayDuration = 6f;
+    public Sprite battleSprite;
+    public Sprite winSprite;
+    public Sprite lossSprite;
+    public AudioClip battleSound;
+    private AudioSource audioSource;
+
     private GlowHighlight glowHighlight;//player glows so know it is selected
     private Queue<Vector3> pathPositions = new Queue<Vector3>();//give unit path it will travel
 
@@ -40,8 +48,14 @@ public class unit : MonoBehaviour
 
     private void Awake()
     {
+        battleImage.gameObject.SetActive(false);
         notifText.gameObject.SetActive(false);
         glowHighlight = GetComponent<GlowHighlight>();
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
 
     }
 
@@ -53,6 +67,56 @@ public class unit : MonoBehaviour
     public void Select()
     {
         glowHighlight.ToggleGlow();
+    }
+
+    public void DisplayImageDuringBattle(BattleImageType imageType)
+    {
+        Debug.Log("DisplayImageDuringBattle called with type: " + imageType.ToString());
+        StartCoroutine(ShowImage(imageType));
+    }
+
+    private IEnumerator ShowImage(BattleImageType imageType, Action callback = null)
+    {
+        Debug.Log("ShowImage coroutine started for type: " + imageType.ToString());
+
+        // Set the correct sprite based on the image type
+        switch (imageType)
+        {
+            case BattleImageType.Battle:
+                battleImage.sprite = battleSprite;
+                notifText.text = $"Battling...";
+                notifText.gameObject.SetActive(true);
+                PlaySound(battleSound);
+                break;
+            case BattleImageType.Win:
+                battleImage.sprite = winSprite;
+                break;
+            case BattleImageType.Loss:
+                battleImage.sprite = lossSprite;
+                break;
+        }
+
+        battleImage.gameObject.SetActive(true); // Show the image
+        yield return new WaitForSeconds(displayDuration); // Wait for specified duration
+        battleImage.gameObject.SetActive(false); // Hide the image
+
+        callback?.Invoke();
+    }
+
+    public enum BattleImageType
+    {
+        Battle,
+        Win,
+        Loss
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.clip = clip;
+            audioSource.Play();
+        }
     }
 
     internal void MoveThroughoutPath(List<Vector3>currentPath)
@@ -110,52 +174,72 @@ public class unit : MonoBehaviour
         {
             Debug.Log("Movement Finished");
             MovementFinished?.Invoke(this);
-            Attack();
+            this.currentTurns -= 1;
+            Attack(startPosition);
             Collect_Coin();
             Visit_Tavern();
         }
     }
 
+    private int playerStrength;
+    private int enemyStrength;
+    private int playerBonus = 0;
+    private int enemyBonus = 0;
+    private int playerGold; // Store the player's current gold amount
 
+    private float playerEffectiveStrength;
+    private float enemyEffectiveStrength;
+    private List<Vector3> lossTiePath = new List<Vector3>();
 
-    private System.Random random = new System.Random();
-
-    public void Attack()
+    public void Attack(Vector3 startPosition)
     {
         Enemy[] enemies = GameObject.FindObjectsOfType<Enemy>();
         for (int i = 0; i < enemies.Length; i++)
         {
             if (transform.position.x == enemies[i].transform.position.x && transform.position.z == enemies[i].transform.position.z)
             {
-                double winProbability;
-                bool isPlayerWin;
-                int playerLosses, enemySurrenders;
+                // Start by displaying the Battle image
+                StartCoroutine(ShowImage(BattleImageType.Battle, () => {
+                    // After the Battle image is done, compute the result
+                    playerStrength = this.currentPower;
+                    enemyStrength = enemies[i].power;
+                    playerGold = this.gold;
+                    CalculateEffectiveStrengths();
 
-                // Simulate battle
-                SimulateBattle(currentPower, enemies[i].power, out winProbability, out isPlayerWin, out playerLosses, out enemySurrenders);
+                    const float epsilon = 0.1f;
+                    if (Mathf.Abs(playerEffectiveStrength - enemyEffectiveStrength) < epsilon)
+                    {
+                        BattleTie();
+                        this.currentPower = playerStrength;
+                        enemies[i].power = enemyStrength;
+                        lossTiePath.Add(startPosition);
+                        MoveThroughoutPath(lossTiePath);
+                        return;
+                    }
 
-                Debug.Log($"Player win chance: {winProbability:0.##}%");
-                Debug.Log($"Player won: {isPlayerWin}");
-                Debug.Log($"Player troop losses: {playerLosses}");
-                Debug.Log($"Enemy troops surrendered: {enemySurrenders}");
+                    if (playerEffectiveStrength > enemyEffectiveStrength)
+                    {
+                        PlayerWins();
+                        DisplayImageDuringBattle(BattleImageType.Win);
+                        notifText.text = $"You DEFEATED the ENEMY!";
+                        notifText.gameObject.SetActive(true);
+                        enemies[i].gameObject.SetActive(false);
+                        this.currentPower = playerStrength;
+                        this.gold = playerGold;
+                    }
+                    else
+                    {
+                        DisplayImageDuringBattle(BattleImageType.Loss);
+                        EnemyWins();
+                        this.currentPower = playerStrength;
+                    }
 
-                if (isPlayerWin)
-                {
-                    notifText.text = $"You DEFEATED the ENEMY!\r\nYou lost {playerLosses} troops: -{playerLosses} power.\r\n{enemySurrenders} enemy troops surrendered and joined your army: +{enemySurrenders} power.";
-                    notifText.gameObject.SetActive(true);
-                    enemies[i].gameObject.SetActive(false);
-                    this.currentPower += enemySurrenders - playerLosses;
-                }
-                else
-                {
-                    this.currentPower -= playerLosses;
                     if (this.currentPower <= 0)
                     {
                         popupManager.ShowLossPopup("You Lose");
-
-
                     }
-                }
+                }));
+                break; // exit the loop as we've found an enemy to battle
             }
             else
             {
@@ -164,33 +248,54 @@ public class unit : MonoBehaviour
         }
     }
 
-    private double WinningChance(double P, double E, double k = 0.5)
+
+    private float RoundToOneDecimalPlace(float value)
     {
-        double ratioTerm = k * (P / E - 1);
-        double absoluteDifferenceTerm = k * (P - E) / (P + E);
-        return 50 * (1 + Math.Tanh(ratioTerm + absoluteDifferenceTerm));
+        return Mathf.Round(value * 10f) / 10f;
     }
 
-    private void SimulateBattle(double P, double E, out double C, out bool isPlayerWin, out int playerLosses, out int enemySurrenders, double k = 0.5, double lossFactor = 0.5, double surrenderFactor = 0.5)
+    private void CalculateEffectiveStrengths()
     {
-        C = WinningChance(P, E, k);
-        isPlayerWin = random.NextDouble() * 100 < C;
+        playerEffectiveStrength = playerStrength + playerBonus + RoundToOneDecimalPlace(UnityEngine.Random.Range(0f, playerStrength * 0.1f));
+        enemyEffectiveStrength = enemyStrength + enemyBonus + RoundToOneDecimalPlace(UnityEngine.Random.Range(0f, enemyStrength * 0.1f));
 
-        double absoluteDifferenceTerm = k * (P - E) / (P + E);
+        Debug.Log($"playerEffectiveStrength: {playerEffectiveStrength}, enemyEffectiveStrength: {enemyEffectiveStrength}");
+    }
 
-        if (isPlayerWin)
-        {
-            playerLosses = (int)(P * (1 - C / 100) * lossFactor * (random.NextDouble() * 0.5 + 0.75));
-            double baseSurrenderRate = (C / 100) * surrenderFactor;
-            double additionalSurrenderRate = absoluteDifferenceTerm * 0.5;
-            double surrenderRate = Math.Min(baseSurrenderRate + additionalSurrenderRate, 1);
-            enemySurrenders = (int)(E * surrenderRate * (random.NextDouble() * 0.5 + 0.75));
-        }
-        else
-        {
-            playerLosses = 10; //(int)(P * lossFactor * (random.NextDouble() * 0.5 + 0.75));
-            enemySurrenders = 0;
-        }
+    private void PlayerWins()
+    {
+        Debug.Log("Player Wins!");
+
+        float winMargin = (float)playerEffectiveStrength / enemyEffectiveStrength;
+        playerStrength -= Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f); // Player loses power based on win closeness
+        Debug.Log($"Win Margin: {winMargin}, Player Strength Loss: {Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f)}");
+
+        // Calculate gold reward
+        float goldFactor = UnityEngine.Random.Range(0.35f, 0.65f);
+        int goldReward = Mathf.FloorToInt(goldFactor * 2 * enemyStrength);
+        playerGold += goldReward;
+
+        Debug.Log($"Player has been rewarded with {goldReward} gold!");
+        enemyStrength = 0; // Destroy the enemy
+    }
+
+    private void EnemyWins()
+    {
+        Debug.Log("Enemy Wins!");
+        Debug.Log("Game Over for the player!");
+        // Implement logic to handle player's game over scenario
+        playerStrength = 0;
+    }
+
+    private void BattleTie()
+    {
+        Debug.Log("It's a tie!");
+
+        // Both sides lose 20% of their troops
+        playerStrength -= Mathf.FloorToInt(playerStrength * 0.2f);
+        enemyStrength -= Mathf.FloorToInt(enemyStrength * 0.2f);
+
+        // Player is sent back to previous hex in the game logic (not shown here)
     }
 
     public void Collect_Coin()
