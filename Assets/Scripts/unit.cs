@@ -178,9 +178,7 @@ public class unit : MonoBehaviour
             Attack(startPosition);
             Collect_Coin();
             Visit_Tavern();
-            Rough_Sleep();
         }
-
     }
 
     private int playerStrength;
@@ -269,7 +267,7 @@ public class unit : MonoBehaviour
         Debug.Log("Player Wins!");
 
         float winMargin = (float)playerEffectiveStrength / enemyEffectiveStrength;
-        playerStrength += Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f); // Player loses power based on win closeness
+        playerStrength -= Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f); // Player loses power based on win closeness
         Debug.Log($"Win Margin: {winMargin}, Player Strength Loss: {Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f)}");
 
         // Calculate gold reward
@@ -324,75 +322,16 @@ public class unit : MonoBehaviour
         for (int i = 0; i < taverns.Length; i++)
         {
 
-            if ((transform.position.x == (taverns[i].transform.position.x)) && transform.position.z == taverns[i].transform.position.z)
+            if ((transform.position.x == (taverns[i].transform.position.x)) && transform.position.z == taverns[i].transform.position.z && gold >= 10)
             {
-                if (this.gold < 10)
-                {
-                    popupManager.ShowNoticePopup("You don't have enough gold");
-                    return;
-
-                }
-                else
-                {
-
-                popupManager.ShowAreYouSurePopup("Do you want to spend 10 gold to recharge your turn count?", (bool isConfirmed) =>
-                {
-                    if (!isConfirmed)
-                    {
-                        Debug.Log("Popup -> NO");
-                        return;
-                    }
-                    else
-                    {
-                        Debug.Log("Popup -> YES");
-                        
-                            this.gold -= 10;
-                            this.currentTurns = this.maxTurns;
-                    }
-                });
-                }
-
-
+                this.gold -= 10;
+                this.currentTurns = this.maxTurns;
                 //coins[i].gameObject.SetActive(false); //Delete coin from the screen
             }
             else
             {
                 Debug.Log("You cannot enter this tavern");
             }
-        }
-    }
-
-
-
-
-
-
-
-    public void Rough_Sleep()
-    {
-        if (this.currentTurns == 0)
-        {
-            Debug.Log("in rough sleep");
-
-            popupManager.ShowNoticePopu("You have no turns left, you must sleep rough to continue", (bool isConfirmed) =>
-            {
-
-                if (isConfirmed)
-                {
-                    if (this.gold == 0)
-                    {
-                        popupManager.ShowNoticePopup("You must sleep rough, and have no gold, this will cost you 10 power");
-                        this.currentPower -= 10;
-
-                    }
-                    else
-                    {
-                        popupManager.ShowNoticePopup("You must sleep rough, this will cost you 10 gold");
-                        this.gold -= 10;
-                    }
-                    this.currentTurns = this.maxTurns;
-                }
-            });
         }
     }
 
