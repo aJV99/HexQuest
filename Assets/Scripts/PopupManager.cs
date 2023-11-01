@@ -72,6 +72,18 @@ public class PopupManager : MonoBehaviour
         okayButton.gameObject.SetActive(true);
     }
 
+    public void ShowNoticePopu(string message, PopupResponse responseCallback)
+    {
+        Debug.Log("SHOW NOTICE");
+        popupText.text = message;
+        callback = responseCallback;
+        popupPanel.SetActive(true);
+        yesButton.gameObject.SetActive(true);
+        noButton.gameObject.SetActive(false);
+        okayButton.gameObject.SetActive(false);
+
+    }
+
     public void ShowLossPopup(string message)
     {
         loseText.text = message;

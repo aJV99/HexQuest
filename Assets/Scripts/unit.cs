@@ -178,7 +178,9 @@ public class unit : MonoBehaviour
             Attack(startPosition);
             Collect_Coin();
             Visit_Tavern();
+            Rough_Sleep();
         }
+
     }
 
     private int playerStrength;
@@ -357,6 +359,40 @@ public class unit : MonoBehaviour
             {
                 Debug.Log("You cannot enter this tavern");
             }
+        }
+    }
+
+
+
+
+
+
+
+    public void Rough_Sleep()
+    {
+        if (this.currentTurns == 0)
+        {
+            Debug.Log("in rough sleep");
+
+            popupManager.ShowNoticePopu("You have no turns left, you must sleep rough to continue", (bool isConfirmed) =>
+            {
+
+                if (isConfirmed)
+                {
+                    if (this.gold == 0)
+                    {
+                        popupManager.ShowNoticePopup("You must sleep rough, and have no gold, this will cost you 10 power");
+                        this.currentPower -= 10;
+
+                    }
+                    else
+                    {
+                        popupManager.ShowNoticePopup("You must sleep rough, this will cost you 10 gold");
+                        this.gold -= 10;
+                    }
+                    this.currentTurns = this.maxTurns;
+                }
+            });
         }
     }
 
