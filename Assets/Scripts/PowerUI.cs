@@ -5,10 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 public class PowerUI : MonoBehaviour
-{
-
-    int value = 10;
-    
+{    
 
     public Text ValueText;
     void Update()

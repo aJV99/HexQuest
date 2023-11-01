@@ -18,9 +18,9 @@ public class unit : MonoBehaviour
 
     public int gold = 0; //currency of player
 
-    public int currentTurns = 3; //how many turns to move a player has
+    public int currentTurns = 10; //how many turns to move a player has
 
-    public int maxTurns = 5; //the maximum of turns player will have after tavern
+    public int maxTurns = 10; //the maximum of turns player will have after tavern
 
     public int MovementPoints { get => movementPoints; } //gets this amount when planning path 
 
@@ -179,6 +179,7 @@ public class unit : MonoBehaviour
             Collect_Coin();
             Visit_Tavern();
             Rough_Sleep();
+            Visit_Town();
         }
 
     }
@@ -362,8 +363,23 @@ public class unit : MonoBehaviour
         }
     }
 
+    public void Visit_Town()
+    {
+        Town[] towns = GameObject.FindObjectsOfType<Town>();
+        for (int i = 0; i < towns.Length; i++)
+        {
+
+            if ((transform.position.x == (towns[i].transform.position.x)) && transform.position.z == towns[i].transform.position.z)
+            {
+
+                popupManager.ShowTownPopup();
+                return;
 
 
+
+            }
+        }
+    }
 
 
 

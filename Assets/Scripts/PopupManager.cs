@@ -12,6 +12,12 @@ public class PopupManager : MonoBehaviour
     private GameObject lossPanel;
 
     [SerializeField]
+    private GameObject townPanel;
+
+    [SerializeField]
+    private TextMeshProUGUI purchaseText;
+
+    [SerializeField]
     private GameObject uiBar;
 
     [SerializeField]
@@ -22,6 +28,9 @@ public class PopupManager : MonoBehaviour
 
     [SerializeField]
     public TextMeshProUGUI loseText;
+
+    [SerializeField]
+    public TextMeshProUGUI TownName;
 
     [SerializeField]
     public Button yesButton;
@@ -35,6 +44,18 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     public Button quitButton;
 
+    [SerializeField]
+    public Button exitButton;
+
+    [SerializeField]
+    public Button buyTroopsButton;
+
+    [SerializeField]
+    public Button restButton;
+
+    [SerializeField]
+    private unit selectedUnit;
+
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
 
@@ -44,6 +65,10 @@ public class PopupManager : MonoBehaviour
         noButton.onClick.AddListener(OnNoClicked);
         okayButton.onClick.AddListener(OnOkayClicked);
         quitButton.onClick.AddListener(OnQuitClicked);
+        exitButton.onClick.AddListener(CloseTownPanel);
+        buyTroopsButton.onClick.AddListener(BuyTroops);
+        restButton.onClick.AddListener(Rest);
+
         ClosePopup();
         uiBar.SetActive(true);
         notifPanel.SetActive(true);
@@ -90,6 +115,13 @@ public class PopupManager : MonoBehaviour
         lossPanel.SetActive(true);
     }
 
+    public void ShowTownPopup()
+    {
+        TownName.text = "Windhelm";
+        townPanel.SetActive(true);
+    }
+
+
     private void OnYesClicked()
     {
         callback?.Invoke(true);
@@ -112,11 +144,52 @@ public class PopupManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
+    private void Rest()
+    {
+        if (selectedUnit.gold >= 50)
+        {
+            selectedUnit.gold -= 50;
+            selectedUnit.currentTurns = selectedUnit.maxTurns;
+            purchaseText.text = "Purchase Complete!";
+            purchaseText.color = Color.green;
+            purchaseText.gameObject.SetActive(true);
+        }
+        else
+        {
+            purchaseText.text = "Not Enough Gold!";
+            purchaseText.color = Color.red;
+            purchaseText.gameObject.SetActive(true);
+        }
+    }
+    private void BuyTroops()
+    {
+        if (selectedUnit.gold >= 50)
+        {
+            selectedUnit.gold -= 50;
+            selectedUnit.currentPower += 10;
+            purchaseText.text = "Purchase Complete!";
+            purchaseText.color = Color.green;
+            purchaseText.gameObject.SetActive(true);
+        }
+        else
+        {
+            purchaseText.text = "Not Enough Gold!";
+            purchaseText.color = Color.red;
+            purchaseText.gameObject.SetActive(true);
+        }
+    }
+
     private void ClosePopup()
     {
         popupPanel.SetActive(false);
         yesButton.gameObject.SetActive(false);
         noButton.gameObject.SetActive(false);
         okayButton.gameObject.SetActive(false);
+    }
+
+    private void CloseTownPanel()
+    {
+        townPanel.SetActive(false);
+
     }
 }
