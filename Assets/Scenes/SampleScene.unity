@@ -39775,6 +39775,10 @@ Transform:
 =======
 <<<<<<< HEAD
 >>>>>>> Stashed changes
+<<<<<<< Updated upstream
+=======
+<<<<<<< HEAD
+>>>>>>> Stashed changes
 --- !u!4 &1987058604 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4a5d77bbee5403244b3bd762d1037e27, type: 3}
@@ -39783,6 +39787,11 @@ Transform:
 <<<<<<< Updated upstream
 =======
 =======
+<<<<<<< Updated upstream
+=======
+=======
+>>>>>>> 6292cfedf85c062a2b07b95f2fc7a0fe0cea2f48
+>>>>>>> Stashed changes
 --- !u!1 &1983252541
 GameObject:
   m_ObjectHideFlags: 0
@@ -39917,6 +39926,14 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1983252541}
   m_CullTransparentMesh: 1
+<<<<<<< Updated upstream
+>>>>>>> 6292cfedf85c062a2b07b95f2fc7a0fe0cea2f48
+>>>>>>> Stashed changes
+=======
+<<<<<<< HEAD
+>>>>>>> 6292cfedf85c062a2b07b95f2fc7a0fe0cea2f48
+>>>>>>> Stashed changes
+=======
 >>>>>>> 6292cfedf85c062a2b07b95f2fc7a0fe0cea2f48
 >>>>>>> Stashed changes
 --- !u!4 &1987664070 stripped
