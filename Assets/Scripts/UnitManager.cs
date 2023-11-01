@@ -93,7 +93,7 @@ public class UnitManager : MonoBehaviour
                 Enemy enemyComponent = selectedHex.transform.GetComponentInChildren<Enemy>();
                 if (enemyComponent != null && enemyComponent.gameObject.activeInHierarchy)
                 {
-                    popupManager.ShowPopup("Enemy Power: " + enemyComponent.power, (bool isConfirmed) =>
+                    popupManager.ShowAreYouSurePopup("Enemy Power: " + enemyComponent.power, (bool isConfirmed) =>
                     {
                         if (!isConfirmed)
                         {
