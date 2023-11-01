@@ -6323,7 +6323,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1132222864503376067, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: m_Name
-      value: Hex (87)
+      value: value: Hex (87)
       objectReference: {fileID: 0}
     - target: {fileID: 5081556891635662421, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: hexType
@@ -6367,6 +6367,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6384707004979347832, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8390813676603296832, guid: 7fbf2624f9322be44a7464055519b54b, type: 3}
+      propertyPath: m_Convex
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
