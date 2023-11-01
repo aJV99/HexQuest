@@ -267,7 +267,7 @@ public class unit : MonoBehaviour
         Debug.Log("Player Wins!");
 
         float winMargin = (float)playerEffectiveStrength / enemyEffectiveStrength;
-        playerStrength -= Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f); // Player loses power based on win closeness
+        playerStrength += Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f); // Player loses power based on win closeness
         Debug.Log($"Win Margin: {winMargin}, Player Strength Loss: {Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f)}");
 
         // Calculate gold reward
@@ -322,10 +322,35 @@ public class unit : MonoBehaviour
         for (int i = 0; i < taverns.Length; i++)
         {
 
-            if ((transform.position.x == (taverns[i].transform.position.x)) && transform.position.z == taverns[i].transform.position.z && gold >= 10)
+            if ((transform.position.x == (taverns[i].transform.position.x)) && transform.position.z == taverns[i].transform.position.z)
             {
-                this.gold -= 10;
-                this.currentTurns = this.maxTurns;
+                if (this.gold < 10)
+                {
+                    popupManager.ShowNoticePopup("You don't have enough gold");
+                    return;
+
+                }
+                else
+                {
+
+                popupManager.ShowAreYouSurePopup("Do you want to spend 10 gold to recharge your turn count?", (bool isConfirmed) =>
+                {
+                    if (!isConfirmed)
+                    {
+                        Debug.Log("Popup -> NO");
+                        return;
+                    }
+                    else
+                    {
+                        Debug.Log("Popup -> YES");
+                        
+                            this.gold -= 10;
+                            this.currentTurns = this.maxTurns;
+                    }
+                });
+                }
+
+
                 //coins[i].gameObject.SetActive(false); //Delete coin from the screen
             }
             else
