@@ -178,8 +178,9 @@ public class unit : MonoBehaviour
             Attack(startPosition);
             Collect_Coin();
             Visit_Tavern();
-            Rough_Sleep();
             Visit_Town();
+            Rough_Sleep();
+
         }
 
     }
@@ -327,6 +328,11 @@ public class unit : MonoBehaviour
 
             if ((transform.position.x == (taverns[i].transform.position.x)) && transform.position.z == taverns[i].transform.position.z)
             {
+                if (this.currentTurns == 0)
+                {
+                    this.currentTurns = 1;
+                }
+
                 if (this.gold < 10)
                 {
                     popupManager.ShowNoticePopup("You don't have enough gold");
@@ -371,6 +377,10 @@ public class unit : MonoBehaviour
 
             if ((transform.position.x == (towns[i].transform.position.x)) && transform.position.z == towns[i].transform.position.z)
             {
+                if (this.currentTurns == 0)
+                {
+                    this.currentTurns = 1;
+                }
 
                 popupManager.ShowTownPopup();
                 return;
