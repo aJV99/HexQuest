@@ -33,13 +33,13 @@ public class unit : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
-    public Image battleImage;
-    public float displayDuration = 6f;
-    public Sprite battleSprite;
-    public Sprite winSprite;
-    public Sprite lossSprite;
-    public AudioClip battleSound;
-    private AudioSource audioSource;
+    //public Image battleImage;
+    //public float displayDuration = 6f;
+    //public Sprite battleSprite;
+    //public Sprite winSprite;
+    //public Sprite lossSprite;
+    //public AudioClip battleSound;
+    //private AudioSource audioSource;
 
     private GlowHighlight glowHighlight;//player glows so know it is selected
     private Queue<Vector3> pathPositions = new Queue<Vector3>();//give unit path it will travel
@@ -48,16 +48,17 @@ public class unit : MonoBehaviour
 
     private void Awake()
     {
-        battleImage.gameObject.SetActive(false);
+        //battleImage.gameObject.SetActive(false);
         notifText.gameObject.SetActive(false);
         glowHighlight = GetComponent<GlowHighlight>();
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
-        {
-            audioSource = gameObject.AddComponent<AudioSource>();
-        }
+        //audioSource = GetComponent<AudioSource>();
+        //if (audioSource == null)
+        //{
+        //    audioSource = gameObject.AddComponent<AudioSource>();
+        //}
 
     }
+
 
     internal void Deselect()
     {
@@ -69,55 +70,55 @@ public class unit : MonoBehaviour
         glowHighlight.ToggleGlow();
     }
 
-    public void DisplayImageDuringBattle(BattleImageType imageType)
-    {
-        Debug.Log("DisplayImageDuringBattle called with type: " + imageType.ToString());
-        StartCoroutine(ShowImage(imageType));
-    }
+    //public void DisplayImageDuringBattle(BattleImageType imageType)
+    //{
+    //    Debug.Log("DisplayImageDuringBattle called with type: " + imageType.ToString());
+    //    StartCoroutine(ShowImage(imageType));
+    //}
 
-    private IEnumerator ShowImage(BattleImageType imageType, Action callback = null)
-    {
-        Debug.Log("ShowImage coroutine started for type: " + imageType.ToString());
+    //private IEnumerator ShowImage(BattleImageType imageType, Action callback = null)
+    //{
+    //    Debug.Log("ShowImage coroutine started for type: " + imageType.ToString());
 
-        // Set the correct sprite based on the image type
-        switch (imageType)
-        {
-            case BattleImageType.Battle:
-                battleImage.sprite = battleSprite;
-                notifText.text = $"Battling...";
-                notifText.gameObject.SetActive(true);
-                PlaySound(battleSound);
-                break;
-            case BattleImageType.Win:
-                battleImage.sprite = winSprite;
-                break;
-            case BattleImageType.Loss:
-                battleImage.sprite = lossSprite;
-                break;
-        }
+    //    // Set the correct sprite based on the image type
+    //    switch (imageType)
+    //    {
+    //        case BattleImageType.Battle:
+    //            battleImage.sprite = battleSprite;
+    //            notifText.text = $"Battling...";
+    //            notifText.gameObject.SetActive(true);
+    //            PlaySound(battleSound);
+    //            break;
+    //        case BattleImageType.Win:
+    //            battleImage.sprite = winSprite;
+    //            break;
+    //        case BattleImageType.Loss:
+    //            battleImage.sprite = lossSprite;
+    //            break;
+    //    }
 
-        battleImage.gameObject.SetActive(true); // Show the image
-        yield return new WaitForSeconds(displayDuration); // Wait for specified duration
-        battleImage.gameObject.SetActive(false); // Hide the image
+    //    battleImage.gameObject.SetActive(true); // Show the image
+    //    yield return new WaitForSeconds(displayDuration); // Wait for specified duration
+    //    battleImage.gameObject.SetActive(false); // Hide the image
 
-        callback?.Invoke();
-    }
+    //    callback?.Invoke();
+    //}
 
-    public enum BattleImageType
-    {
-        Battle,
-        Win,
-        Loss
-    }
+    //public enum BattleImageType
+    //{
+    //    Battle,
+    //    Win,
+    //    Loss
+    //}
 
-    private void PlaySound(AudioClip clip)
-    {
-        if (audioSource != null && clip != null)
-        {
-            audioSource.clip = clip;
-            audioSource.Play();
-        }
-    }
+    //private void PlaySound(AudioClip clip)
+    //{
+    //    if (audioSource != null && clip != null)
+    //    {
+    //        audioSource.clip = clip;
+    //        audioSource.Play();
+    //    }
+    //}
 
     internal void MoveThroughoutPath(List<Vector3>currentPath)
     {
@@ -180,6 +181,10 @@ public class unit : MonoBehaviour
             Visit_Tavern();
             Visit_Town();
             Rough_Sleep();
+            if (this.currentPower <= 0)
+            {
+                popupManager.ShowLossPopup("You Lose");
+            }
 
         }
 
@@ -203,7 +208,9 @@ public class unit : MonoBehaviour
             if (transform.position.x == enemies[i].transform.position.x && transform.position.z == enemies[i].transform.position.z)
             {
                 // Start by displaying the Battle image
-                StartCoroutine(ShowImage(BattleImageType.Battle, () => {
+                //StartCoroutine(ShowImage(BattleImageType.Battle, () =>
+
+                //{
                     // After the Battle image is done, compute the result
                     playerStrength = this.currentPower;
                     enemyStrength = enemies[i].power;
@@ -224,7 +231,7 @@ public class unit : MonoBehaviour
                     if (playerEffectiveStrength > enemyEffectiveStrength)
                     {
                         PlayerWins();
-                        DisplayImageDuringBattle(BattleImageType.Win);
+                        //DisplayImageDuringBattle(BattleImageType.Win);
                         notifText.text = $"You DEFEATED the ENEMY!";
                         notifText.gameObject.SetActive(true);
                         enemies[i].gameObject.SetActive(false);
@@ -233,7 +240,7 @@ public class unit : MonoBehaviour
                     }
                     else
                     {
-                        DisplayImageDuringBattle(BattleImageType.Loss);
+                        //DisplayImageDuringBattle(BattleImageType.Loss);
                         EnemyWins();
                         this.currentPower = playerStrength;
                     }
@@ -242,8 +249,8 @@ public class unit : MonoBehaviour
                     {
                         popupManager.ShowLossPopup("You Lose");
                     }
-                }));
-                break; // exit the loop as we've found an enemy to battle
+                //}));
+                //break; // exit the loop as we've found an enemy to battle
             }
             else
             {
@@ -400,25 +407,27 @@ public class unit : MonoBehaviour
         {
             Debug.Log("in rough sleep");
 
-            popupManager.ShowNoticePopu("You have no turns left, you must sleep rough to continue", (bool isConfirmed) =>
+            if (this.gold < 10)
             {
+                popupManager.ShowNoticePopup("You have no turns left, you must sleep rough to continue. This has cost you 10 power");
+                this.currentPower -= 10;
 
-                if (isConfirmed)
-                {
-                    if (this.gold == 0)
-                    {
-                        popupManager.ShowNoticePopup("You must sleep rough, and have no gold, this will cost you 10 power");
-                        this.currentPower -= 10;
+            }
+            else
+            {
+                popupManager.ShowNoticePopup("You have no turns left, you must sleep rough to continue. This has cost you 10 gold");
+                this.gold -= 10;
+            }
+            this.currentTurns = (this.maxTurns)/2;
 
-                    }
-                    else
-                    {
-                        popupManager.ShowNoticePopup("You must sleep rough, this will cost you 10 gold");
-                        this.gold -= 10;
-                    }
-                    this.currentTurns = this.maxTurns;
-                }
-            });
+            //popupManager.ShowNoticePopu("", (bool isConfirmed) =>
+            //{
+
+            //    if (isConfirmed)
+            //    {
+                    
+            //    }
+            //});
         }
     }
 

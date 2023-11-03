@@ -27,6 +27,9 @@ public class PopupManager : MonoBehaviour
     public TextMeshProUGUI popupText;
 
     [SerializeField]
+    public TextMeshProUGUI areYouSureText;
+
+    [SerializeField]
     public TextMeshProUGUI loseText;
 
     [SerializeField]
@@ -92,6 +95,7 @@ public class PopupManager : MonoBehaviour
         Debug.Log("SHOW NOTICE");
         popupText.text = message;
         popupPanel.SetActive(true);
+        areYouSureText.gameObject.SetActive(false);
         yesButton.gameObject.SetActive(false);
         noButton.gameObject.SetActive(false);
         okayButton.gameObject.SetActive(true);
@@ -103,9 +107,9 @@ public class PopupManager : MonoBehaviour
         popupText.text = message;
         callback = responseCallback;
         popupPanel.SetActive(true);
-        yesButton.gameObject.SetActive(true);
-        noButton.gameObject.SetActive(false);
-        okayButton.gameObject.SetActive(false);
+        //yesButton.gameObject.SetActive(true);
+        //noButton.gameObject.SetActive(false);
+        //okayButton.gameObject.SetActive(true);
 
     }
 
@@ -136,6 +140,7 @@ public class PopupManager : MonoBehaviour
 
     private void OnOkayClicked()
     {
+        //callback?.Invoke(true);
         ClosePopup();
     }
 
@@ -163,9 +168,9 @@ public class PopupManager : MonoBehaviour
     }
     private void BuyTroops()
     {
-        if (selectedUnit.gold >= 50)
+        if (selectedUnit.gold >= 20)
         {
-            selectedUnit.gold -= 50;
+            selectedUnit.gold -= 20;
             selectedUnit.currentPower += 10;
             purchaseText.text = "Purchase Complete!";
             purchaseText.color = Color.green;
