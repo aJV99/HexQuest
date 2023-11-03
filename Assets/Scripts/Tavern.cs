@@ -1,18 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Tavern : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField]
+    private GameObject FloatingTextPrefab;
+
+
+    public void Start()
     {
-        
+        this.FloatingTextPrefab.transform.position = new Vector3(this.transform.position.x, 4, this.transform.position.z);
+
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnMouseOver()
     {
-        
+
+        this.FloatingTextPrefab.SetActive(true);
+        this.FloatingTextPrefab.GetComponent<TextMeshPro>().text = "Tavern";
+        this.FloatingTextPrefab.transform.LookAt(FloatingTextPrefab.transform.position - Camera.main.transform.position);
+
+
+    }
+    private void OnMouseExit()
+    {
+        this.FloatingTextPrefab.SetActive(false);
     }
 }
