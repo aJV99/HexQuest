@@ -237,6 +237,10 @@ public class unit : MonoBehaviour
                         enemies[i].gameObject.SetActive(false);
                         this.currentPower = playerStrength;
                         this.gold = playerGold;
+                        if (enemies[i].isBoss)
+                    {
+                        popupManager.ShowLossPopup("You Win");
+                    }
                     }
                     else
                     {

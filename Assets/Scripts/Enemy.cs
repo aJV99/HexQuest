@@ -12,6 +12,9 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private GameObject FloatingTextPrefab;
 
+    [SerializeField]
+    public bool isBoss;
+
 
     public void Start()
     {
@@ -23,9 +26,26 @@ public class Enemy : MonoBehaviour
     {
     
       this.FloatingTextPrefab.SetActive(true);
-      this.FloatingTextPrefab.GetComponent<TextMeshPro>().text = "Enemy Power: " + this.power.ToString();
-      this.FloatingTextPrefab.transform.LookAt(FloatingTextPrefab.transform.position - Camera.main.transform.position);
-  
+        if (this.isBoss)
+        {
+            this.FloatingTextPrefab.GetComponent<TextMeshPro>().text = "Boss Power: " + this.power.ToString();
+
+        }
+        else
+        {
+            this.FloatingTextPrefab.GetComponent<TextMeshPro>().text = "Enemy Power: " + this.power.ToString();
+
+        }
+        // Make the text look at the camera
+        Vector3 directionToCamera = FloatingTextPrefab.transform.position - Camera.main.transform.position;
+
+        // Zero out the y component of the direction vector to make sure it doesn't tilt
+        directionToCamera.y = 0;
+
+        // Update the rotation of the text to face the camera, only around the Y-axis
+        FloatingTextPrefab.transform.rotation = Quaternion.LookRotation(directionToCamera);
+
+
 
     }
     private void OnMouseExit()
