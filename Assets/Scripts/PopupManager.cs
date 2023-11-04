@@ -85,6 +85,7 @@ public class PopupManager : MonoBehaviour
         popupText.text = message;
         callback = responseCallback;
         popupPanel.SetActive(true);
+        areYouSureText.gameObject.SetActive(true);
         yesButton.gameObject.SetActive(true);
         noButton.gameObject.SetActive(true);
         okayButton.gameObject.SetActive(false);
