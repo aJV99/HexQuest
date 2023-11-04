@@ -105,11 +105,11 @@ public class UnitManager : MonoBehaviour
                         movementSystem.MoveUnit(selectedUnit, this.hexGrid);
                         PlayersTurn = false;
                         selectedUnit.MovementFinished += ResetTurn;
-                        if (selectedHex.hexType is HexType.gold)
+
+                        //After an enemy is defeated the hex type should be set to default so there is no more movement penalty
+                        if (selectedHex.hexType is HexType.Difficult)
                         {
                             selectedHex.hexType = HexType.Default;
-                            this.selectedUnit.gold += 50;
-                            Debug.Log("Gold");
                         }
                         ClearOldSelection();
                     });

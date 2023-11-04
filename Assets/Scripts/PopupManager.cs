@@ -151,9 +151,9 @@ public class PopupManager : MonoBehaviour
 
     private void Rest()
     {
-        if (selectedUnit.gold >= 50)
+        if (selectedUnit.gold >= 25)
         {
-            selectedUnit.gold -= 50;
+            selectedUnit.gold -= 25;
             selectedUnit.currentTurns = selectedUnit.maxTurns;
             purchaseText.text = "Purchase Complete!";
             purchaseText.color = Color.green;
