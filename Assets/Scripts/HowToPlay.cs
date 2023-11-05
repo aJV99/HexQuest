@@ -22,7 +22,7 @@ public class HowToPlayMenuHandler : MonoBehaviour
     private Button previousButton;  // Reference to the Previous button
 
     private List<HowToPlayEntry> howToPlayEntries = new List<HowToPlayEntry>
-{
+{   // Instructions on how to play the game
     new HowToPlayEntry { header = "Hex Quest - How To Play", paragraph = "Welcome to Hex Quest! Step into a world of medieval strategy, where your decisions shape the destiny of a fallen knight seeking to reclaim his conquered castle. If you're new to this realm, fret not! Here's a step-by-step guide to master the game:\r\n\r\n1. Objective\r\nYour primary goal is to assemble, train, and lead an army robust enough to reclaim your castle from the opposing force that has captured it.\r\n\r\n2. Starting Out\r\nYou begin as a lone knight on a vast 3D map. Your immediate task is to explore the terrain, gather resources, and recruit troops." },
     new HowToPlayEntry { header = "Hex Quest - How To Play - Page 2", paragraph = "3. Movement and Turns\r\n- Movement: Navigate the game world by clicking on the desired tile.\r\n- Each turn grants you up to 5 moves.\r\n- Once your 5 moves are consumed, you must rest before resuming your journey.\r\n\r\n4. Structures & Key Locations\r\n- Taverns: These provide a full rest, recharging your moves to the maximum of 5.\r\n- Wild Camps: Rest here to regain up to 3 moves. But be cautious, as these camps can be ambushed by enemies.\r\n- Towns: Spend gold here to recruit troops. The larger your army, the stronger you are in combat.\r\n- Mines: Engage in mini-games to extract valuable resources which can be converted into gold." },
     new HowToPlayEntry { header = "Hex Quest - How To Play - Page 3", paragraph = "5. Army Dynamics\r\n- Your army's strength can grow or diminish based on your decisions and battle outcomes.\r\n- Engage in skirmishes to potentially earn gold and recruit additional troops. Beware, as you might also lose soldiers in these battles.\r\n\r\n6. Combat Mechanics\r\n- Engage with enemies on the map.\r\n- The outcome of battles is determined by the size and strength of your army compared to the enemy's.\r\n- Strategize wisely, as repeated defeats can end your quest." },
@@ -40,6 +40,7 @@ public class HowToPlayMenuHandler : MonoBehaviour
         UpdateButtonStates();
     }
 
+    // Cycle through pages of instructions
     public void OnNextButtonClicked()
     {
         if (currentIndex < howToPlayEntries.Count - 1)

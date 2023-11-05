@@ -18,6 +18,7 @@ public class MovementSystem : MonoBehaviour
         movementRange = new BFSResult();
     }
 
+    // Show max distance that can be traveled 
     public void ShowRange(unit selectedUnit, HexGrid hexGrid)
     {
         CalculateRange(selectedUnit, hexGrid);
@@ -31,11 +32,13 @@ public class MovementSystem : MonoBehaviour
         }
     }
 
+    // Calculate the max distance that can be traveled 
     private void CalculateRange(unit selectedUnit, HexGrid hexGrid)
     {
         movementRange = GraphSearch.BFSGetRange(hexGrid, hexGrid.GetClosestHex(selectedUnit.transform.position), selectedUnit.MovementPoints);
     }
 
+    // Show path player will tavel to a certain Hex
     public void ShowPath(Vector3Int selectedHexPosition, HexGrid hexGrid)
     {
         if (movementRange.GetRangePositions().Contains(selectedHexPosition))
@@ -52,6 +55,7 @@ public class MovementSystem : MonoBehaviour
         }
     }
 
+    // Move the player
     public void MoveUnit(unit selectedUnit, HexGrid hexGrid)
     {
         Debug.Log("Moving unit " + selectedUnit.name);

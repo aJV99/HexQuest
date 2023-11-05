@@ -18,13 +18,15 @@ public class HexGrid : MonoBehaviour
    
     }
 
-    public Hex GetTileAt(Vector3Int hexCoodinates)
+    // Find tile object using coordinates
+    public Hex GetTileAt(Vector3Int hexCoordinates)
     {
         Hex result = null;
-        hexTileDict.TryGetValue(hexCoodinates, out result);
+        hexTileDict.TryGetValue(hexCoordinates, out result);
         return result;
     }
 
+    // Get all tiles surrounding a tile
     public List<Vector3Int> GetNeighboursFor(Vector3Int hexCoordinates)
     {
         if (hexTileDict.ContainsKey(hexCoordinates) == false)
