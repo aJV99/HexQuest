@@ -11,12 +11,9 @@ Hex Quest is a strategy game set in a medieval environment where the player navi
 - **Pop-up Notifications**: Informative pop-ups guide the player through battles, town visits, and other game events.
 
 ## Environment
-Journey through an immersive medieval kingdom filled with towns, taverns, enemies, and treasures. Every step is crucial as the terrain affects your strategy and the choices you make.
+Created in Unity 3D Game Development v2023.1.15f1 with C-Sharp
 
 ## [Play HexQuest Here](https://ajv99.github.io/HexQuest/build/index.html)
-
-## What is it?
-Hex Quest is a unique blend of strategy and adventure, set on a hex-based map. As a would-be conqueror, you'll navigate this intricate world, face formidable foes, and gather resources. Your mission? Defeat the final boss in his stronghold and seize the kingdom.
 
 ## How to Play
 1. **Identify Your Player**: Look for the cylinder with a green sphere above it.
