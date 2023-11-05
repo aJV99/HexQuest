@@ -62,6 +62,8 @@ public class PopupManager : MonoBehaviour
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
 
+
+    // Asign functions to buttons 
     private void Awake()
     {
         yesButton.onClick.AddListener(OnYesClicked);
@@ -79,12 +81,14 @@ public class PopupManager : MonoBehaviour
 
     }
 
+    // General popup for asking the user if they wish to continue
     public void ShowAreYouSurePopup(string message, PopupResponse responseCallback)
     {
         Debug.Log("ARE YOU SURE");
         popupText.text = message;
         callback = responseCallback;
         popupPanel.SetActive(true);
+        areYouSureText.gameObject.SetActive(true);
         yesButton.gameObject.SetActive(true);
         noButton.gameObject.SetActive(true);
         okayButton.gameObject.SetActive(false);
@@ -113,12 +117,14 @@ public class PopupManager : MonoBehaviour
 
     }
 
+    // Popup for losing the game
     public void ShowLossPopup(string message)
     {
         loseText.text = message;
         lossPanel.SetActive(true);
     }
 
+    // Popup for each town
     public void ShowTownPopup()
     {
         TownName.text = "Windhelm";
@@ -149,11 +155,19 @@ public class PopupManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
+    // When the player rests in a town, take their gold and set their currentMoves to the maximum
     private void Rest()
     {
-        if (selectedUnit.gold >= 50)
+        if (selectedUnit.currentTurns == selectedUnit.maxTurns)
         {
-            selectedUnit.gold -= 50;
+            purchaseText.text = "You Can't Rest Anymore!";
+            purchaseText.color = Color.red;
+            purchaseText.gameObject.SetActive(true);
+            return;
+        }
+        if (selectedUnit.gold >= 25)
+        {
+            selectedUnit.gold -= 25;
             selectedUnit.currentTurns = selectedUnit.maxTurns;
             purchaseText.text = "Purchase Complete!";
             purchaseText.color = Color.green;
@@ -166,6 +180,8 @@ public class PopupManager : MonoBehaviour
             purchaseText.gameObject.SetActive(true);
         }
     }
+
+    // When the player buys troops or "power" take their gold and add to their power value
     private void BuyTroops()
     {
         if (selectedUnit.gold >= 20)

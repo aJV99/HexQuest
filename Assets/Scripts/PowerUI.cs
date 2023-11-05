@@ -8,6 +8,8 @@ public class PowerUI : MonoBehaviour
 {    
 
     public Text ValueText;
+
+    // Display the players values
     void Update()
     {
         var player = GameObject.FindAnyObjectByType<unit>();

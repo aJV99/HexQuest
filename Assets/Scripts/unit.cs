@@ -237,6 +237,14 @@ public class unit : MonoBehaviour
                         enemies[i].gameObject.SetActive(false);
                         this.currentPower = playerStrength;
                         this.gold = playerGold;
+                        if (enemies[i].isBoss)
+                    {   
+                        if(this.currentTurns <= 0)
+                        {
+                            this.currentTurns = 1;
+                        }
+                        popupManager.ShowLossPopup("You Win");
+                    }
                     }
                     else
                     {
@@ -288,6 +296,7 @@ public class unit : MonoBehaviour
 
         Debug.Log($"Player has been rewarded with {goldReward} gold!");
         enemyStrength = 0; // Destroy the enemy
+        
     }
 
     private void EnemyWins()
@@ -409,8 +418,13 @@ public class unit : MonoBehaviour
 
             if (this.gold < 10)
             {
-                popupManager.ShowNoticePopup("You have no turns left, you must sleep rough to continue. This has cost you 10 power");
                 this.currentPower -= 10;
+                if (currentPower > 0)
+                {
+                    popupManager.ShowNoticePopup("You have no turns left, you must sleep rough to continue. This has cost you 10 power");
+
+                }
+
 
             }
             else
