@@ -152,6 +152,13 @@ public class PopupManager : MonoBehaviour
 
     private void Rest()
     {
+        if (selectedUnit.currentTurns == selectedUnit.maxTurns)
+        {
+            purchaseText.text = "You Can't Rest Anymore!";
+            purchaseText.color = Color.red;
+            purchaseText.gameObject.SetActive(true);
+            return;
+        }
         if (selectedUnit.gold >= 25)
         {
             selectedUnit.gold -= 25;

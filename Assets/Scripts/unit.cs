@@ -238,7 +238,11 @@ public class unit : MonoBehaviour
                         this.currentPower = playerStrength;
                         this.gold = playerGold;
                         if (enemies[i].isBoss)
-                    {
+                    {   
+                        if(this.currentTurns <= 0)
+                        {
+                            this.currentTurns = 1;
+                        }
                         popupManager.ShowLossPopup("You Win");
                     }
                     }
