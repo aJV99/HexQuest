@@ -1,4 +1,4 @@
-# HexQuest
+# Hex Quest
 
 ## Description
 Hex Quest is a strategy game set in a medieval environment where the player navigates through a hex-based kingdom. The objective is to strategize, battle enemies, and amass gold, all while maintaining the player's power. The ultimate goal? Conquer the final boss in his castle and claim the kingdom.
