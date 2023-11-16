@@ -18,6 +18,10 @@ public class unit : MonoBehaviour
 
     public int gold = 0; //currency of player
 
+    public int keys = 0; //keys of player
+
+    public bool questActive = false; //does the player already have a quest?
+
     public int currentTurns = 10; //how many turns to move a player has
 
     public int maxTurns = 10; //the maximum of turns player will have after tavern
@@ -178,6 +182,7 @@ public class unit : MonoBehaviour
             this.currentTurns -= 1;
             Attack(startPosition);
             Collect_Coin();
+            Collect_Key();
             Visit_Tavern();
             Visit_Town();
             Rough_Sleep();
@@ -332,6 +337,24 @@ public class unit : MonoBehaviour
             else
             {
                 Debug.Log("No Gold Here");
+            }
+        }
+    }
+
+    public void Collect_Key()
+    {
+        Key[] keys = GameObject.FindObjectsOfType<Key>();
+        for (int i = 0; i < keys.Length; i++)
+        {
+
+            if (transform.position.x == keys[i].transform.position.x && transform.position.z == keys[i].transform.position.z)
+            {
+                this.keys += 1;
+                keys[i].gameObject.SetActive(false); //Delete key from the screen
+            }
+            else
+            {
+                Debug.Log("No key Here");
             }
         }
     }

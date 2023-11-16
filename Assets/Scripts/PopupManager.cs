@@ -2,11 +2,15 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Unity.VisualScripting;
 
 public class PopupManager : MonoBehaviour
 {
     [SerializeField]
     private GameObject popupPanel;
+
+    [SerializeField]
+    public OrbitCamera maincamera;
 
     [SerializeField]
     private GameObject lossPanel;
@@ -57,7 +61,32 @@ public class PopupManager : MonoBehaviour
     public Button restButton;
 
     [SerializeField]
+    public Button questButton;
+
+    [SerializeField]
     private unit selectedUnit;
+
+    [SerializeField]
+    public GameObject Escpanel;
+
+    [SerializeField]
+    public PowerUI UIManager;
+
+    [SerializeField]
+    public Button SoundButton;
+
+    [SerializeField]
+    public Button IncreaseTextSize;
+
+    [SerializeField]
+    public Button DecreaseTextSize;
+
+    [SerializeField]
+    public Button Close;
+
+    [SerializeField]
+    public Button MainMenu;
+
 
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
@@ -73,6 +102,12 @@ public class PopupManager : MonoBehaviour
         exitButton.onClick.AddListener(CloseTownPanel);
         buyTroopsButton.onClick.AddListener(BuyTroops);
         restButton.onClick.AddListener(Rest);
+        questButton.onClick.AddListener(AcceptQuest1);
+        IncreaseTextSize.onClick.AddListener(OnIncreaseTextClicked);
+        DecreaseTextSize.onClick.AddListener(OnDecreaseTextClicked);
+        Close.onClick.AddListener(CloseEsc);
+        MainMenu.onClick.AddListener(OnQuitClicked);
+
 
         ClosePopup();
         uiBar.SetActive(true);
@@ -81,6 +116,15 @@ public class PopupManager : MonoBehaviour
 
     }
 
+    public void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) & Escpanel.activeSelf == false)
+        {
+            Debug.Log("Escape pressed");
+            ShowEscMenu();
+        }
+       
+    }
     // General popup for asking the user if they wish to continue
     public void ShowAreYouSurePopup(string message, PopupResponse responseCallback)
     {
@@ -105,6 +149,7 @@ public class PopupManager : MonoBehaviour
         okayButton.gameObject.SetActive(true);
     }
 
+
     public void ShowNoticePopu(string message, PopupResponse responseCallback)
     {
         Debug.Log("SHOW NOTICE");
@@ -115,6 +160,13 @@ public class PopupManager : MonoBehaviour
         //noButton.gameObject.SetActive(false);
         //okayButton.gameObject.SetActive(true);
 
+    }
+
+    public void ShowEscMenu()
+    {
+
+        Escpanel.SetActive(true);
+        
     }
 
     // Popup for losing the game
@@ -154,6 +206,26 @@ public class PopupManager : MonoBehaviour
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
+
+    private void OnIncreaseTextClicked()
+    {
+        if (UIManager.textSize < 20)
+        {
+            Debug.Log("increased");
+            UIManager.textSize += 2;
+
+        }
+    }
+
+    private void OnDecreaseTextClicked()
+    {
+        if (UIManager.textSize > 10)
+        {
+            UIManager.textSize -= 2;
+
+        }
+    }
+
 
     // When the player rests in a town, take their gold and set their currentMoves to the maximum
     private void Rest()
@@ -200,12 +272,42 @@ public class PopupManager : MonoBehaviour
         }
     }
 
+    private void AcceptQuest1()
+    {
+        if (selectedUnit.questActive == false)
+        {
+            CloseTownPanel();
+            Key key = GameObject.FindFirstObjectByType<Key>();
+            key.SetActive();
+            maincamera.target = key.transform;
+            maincamera.oldPos = maincamera.transform.position;
+            maincamera.zoom = true;
+
+
+
+            //ShowNoticePopup("You must collect the key from the west of the map, it is guarded by an enemy!");
+        }
+        else
+        {
+            purchaseText.text = "You already have a quest!";
+            purchaseText.color = Color.red;
+            purchaseText.gameObject.SetActive(true);
+        }
+    }
+
     private void ClosePopup()
     {
         popupPanel.SetActive(false);
         yesButton.gameObject.SetActive(false);
         noButton.gameObject.SetActive(false);
         okayButton.gameObject.SetActive(false);
+        
+    }
+
+    private void CloseEsc()
+    {
+        Escpanel.SetActive(false);
+
     }
 
     private void CloseTownPanel()
