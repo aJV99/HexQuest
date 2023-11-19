@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
+using System.Collections;
 
 public class PopupManager : MonoBehaviour
 {
@@ -102,7 +103,7 @@ public class PopupManager : MonoBehaviour
         exitButton.onClick.AddListener(CloseTownPanel);
         buyTroopsButton.onClick.AddListener(BuyTroops);
         restButton.onClick.AddListener(Rest);
-        questButton.onClick.AddListener(AcceptQuest1);
+        questButton.onClick.AddListener(AcceptQuest);
         IncreaseTextSize.onClick.AddListener(OnIncreaseTextClicked);
         DecreaseTextSize.onClick.AddListener(OnDecreaseTextClicked);
         Close.onClick.AddListener(CloseEsc);
@@ -148,7 +149,6 @@ public class PopupManager : MonoBehaviour
         noButton.gameObject.SetActive(false);
         okayButton.gameObject.SetActive(true);
     }
-
 
     public void ShowNoticePopu(string message, PopupResponse responseCallback)
     {
@@ -201,6 +201,7 @@ public class PopupManager : MonoBehaviour
         //callback?.Invoke(true);
         ClosePopup();
     }
+
 
     private void OnQuitClicked()
     {
@@ -272,20 +273,15 @@ public class PopupManager : MonoBehaviour
         }
     }
 
-    private void AcceptQuest1()
+    private void AcceptQuest()
     {
         if (selectedUnit.questActive == false)
         {
             CloseTownPanel();
             Key key = GameObject.FindFirstObjectByType<Key>();
             key.SetActive();
-            maincamera.target = key.transform;
-            maincamera.oldPos = maincamera.transform.position;
-            maincamera.zoom = true;
 
-
-
-            //ShowNoticePopup("You must collect the key from the west of the map, it is guarded by an enemy!");
+            StartCoroutine(PanCameraToObject(key.gameObject));
         }
         else
         {
@@ -314,5 +310,63 @@ public class PopupManager : MonoBehaviour
     {
         townPanel.SetActive(false);
 
+    }
+
+    public IEnumerator PanCameraToObject(GameObject targetObject)
+    {
+        Debug.Log("Coroutine started: Panning to object.");
+
+        // Save the original camera position and rotation
+        Vector3 originalPosition = Camera.main.transform.position;
+        Quaternion originalRotation = Camera.main.transform.rotation;
+
+        // Calculate the target position and rotation relative to the target object
+        Vector3 targetPositionOffset = new Vector3(-7.211359f, 11.66f, -6.627083f);
+        Quaternion targetRotationOffset = Quaternion.Euler(49.971f, 47.418f, 0f);
+        Vector3 targetPosition = targetObject.transform.TransformPoint(targetPositionOffset);
+        Quaternion targetRotation = targetObject.transform.rotation * targetRotationOffset;
+
+        float timeToFocus = 1.0f; // Duration of the focus animation
+
+        // Animate camera to the target
+        float t = 0f;
+        while (t < 1.0f)
+        {
+            t += Time.deltaTime / timeToFocus;
+            Camera.main.transform.position = Vector3.Lerp(originalPosition, targetPosition, t);
+            Camera.main.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, t);
+            yield return null;
+        }
+
+        Debug.Log("Focus on object achieved. Starting focus timer.");
+
+        // Keep the focus on the key for 2 seconds using a timer
+        float focusTimeElapsed = 0f;
+        while (focusTimeElapsed < 2.0f)
+        {
+            focusTimeElapsed += Time.deltaTime;
+            // Keep setting the camera's position and rotation to ensure it stays put.
+            Camera.main.transform.position = targetPosition;
+            Camera.main.transform.rotation = targetRotation;
+            yield return null;
+        }
+
+        Debug.Log("Focus duration ended. Returning to player.");
+
+        // Return the camera to the player
+        t = 0f; // Reset t to 0 to start the lerp for the return journey
+        while (t < 1.0f)
+        {
+            t += Time.deltaTime / timeToFocus;
+            Camera.main.transform.position = Vector3.Lerp(targetPosition, originalPosition, t);
+            Camera.main.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, t);
+            yield return null;
+        }
+
+        // Ensure camera is exactly in the original position and rotation
+        Camera.main.transform.position = originalPosition;
+        Camera.main.transform.rotation = originalRotation;
+
+        Debug.Log("Coroutine finished: Camera returned to player.");
     }
 }

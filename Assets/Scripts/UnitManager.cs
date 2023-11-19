@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class UnitManager : MonoBehaviour
 {
+    public static UnitManager Instance { get; private set; }
+
     [SerializeField]
     private HexGrid hexGrid;
 
@@ -18,6 +20,19 @@ public class UnitManager : MonoBehaviour
     [SerializeField]
     private unit selectedUnit;
     private Hex previouslySelectedHex;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void HandleUnitSelected(GameObject unit)
     {
@@ -119,7 +134,7 @@ public class UnitManager : MonoBehaviour
                     movementSystem.MoveUnit(selectedUnit, this.hexGrid);
                     PlayersTurn = false;
                     selectedUnit.MovementFinished += ResetTurn;
-                    if (selectedHex.hexType is HexType.gold)
+                    if (selectedHex.hexType is HexType.Gold)
                     {
                         selectedHex.hexType = HexType.Default;
                         this.selectedUnit.gold += 50;
@@ -133,7 +148,7 @@ public class UnitManager : MonoBehaviour
                 movementSystem.MoveUnit(selectedUnit, this.hexGrid);
                 PlayersTurn = false;
                 selectedUnit.MovementFinished += ResetTurn;
-                if (selectedHex.hexType is HexType.gold)
+                if (selectedHex.hexType is HexType.Gold)
                 {
                     selectedHex.hexType = HexType.Default;
                     this.selectedUnit.gold += 50;

@@ -18,8 +18,27 @@ public class Enemy : MonoBehaviour
 
     public void Start()
     {
-        this.FloatingTextPrefab.transform.position = new Vector3(this.transform.position.x, 3, this.transform.position.z); 
-        
+        this.FloatingTextPrefab.transform.position = new Vector3(this.transform.position.x, 3, this.transform.position.z);
+        Difficulty currentDifficulty = GlobalSettings.SelectedDifficulty;
+
+        AdjustPowerBasedOnDifficulty(currentDifficulty);
+
+    }
+
+    private void AdjustPowerBasedOnDifficulty(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                power = Mathf.CeilToInt(power * 0.5f); // Half power for easy
+                break;
+            case Difficulty.Medium:
+                // No change for medium
+                break;
+            case Difficulty.Hard:
+                power = power * 2; // Double power for hard
+                break;
+        }
     }
 
     private void OnMouseOver()

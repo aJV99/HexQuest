@@ -14,11 +14,13 @@ public class unit : MonoBehaviour
 {
     private int movementPoints = 20; //movement points of our movement
 
-    public int currentPower = 10; //power of character
+    public int currentPower = 30; //power of character
 
     public int gold = 0; //currency of player
 
-    public int keys = 0; //keys of player
+    public int keys = 1; //keys of player
+
+    public int lives = 3;
 
     public bool questActive = false; //does the player already have a quest?
 
@@ -37,30 +39,82 @@ public class unit : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
-    //public Image battleImage;
-    //public float displayDuration = 6f;
-    //public Sprite battleSprite;
-    //public Sprite winSprite;
-    //public Sprite lossSprite;
-    //public AudioClip battleSound;
-    //private AudioSource audioSource;
+    public Hex level1Gate;
+
+    public Hex CurrentHex { get; private set; }
+
+    public Image image;
+    public float displayDuration = 5f;
+    public float displayDurationShort = 2f;
+    public Sprite battleSprite;
+    public AudioClip battleSound;
+    public Sprite winSprite;
+    public AudioClip winSound;
+    public Sprite lossSprite;
+    public AudioClip lossSound;
+    private AudioSource audioSource;
 
     private GlowHighlight glowHighlight;//player glows so know it is selected
     private Queue<Vector3> pathPositions = new Queue<Vector3>();//give unit path it will travel
 
     public event Action<unit> MovementFinished;
+    private CheckpointData currentCheckpoint;
 
     private void Awake()
     {
-        //battleImage.gameObject.SetActive(false);
+        image.gameObject.SetActive(false);
         notifText.gameObject.SetActive(false);
         glowHighlight = GetComponent<GlowHighlight>();
-        //audioSource = GetComponent<AudioSource>();
-        //if (audioSource == null)
-        //{
-        //    audioSource = gameObject.AddComponent<AudioSource>();
-        //}
+        audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
+        currentCheckpoint = new CheckpointData
+        {
+            checkpointPosition = transform.position, // The starting position
+            power = currentPower,
+            gold = gold,
+            keys = keys,
+            turns = currentTurns
+        };
 
+    }
+
+    public void Start()
+    {
+        Difficulty currentDifficulty = GlobalSettings.SelectedDifficulty;
+
+        AdjustMaxTurnsBasedOnDifficulty(currentDifficulty);
+
+    }
+
+    private void AdjustMaxTurnsBasedOnDifficulty(Difficulty difficulty)
+    {
+        switch (difficulty)
+        {
+            case Difficulty.Easy:
+                maxTurns = maxTurns + Mathf.CeilToInt(maxTurns * 0.3f);
+                break;
+            case Difficulty.Medium:
+                // No change for medium
+                break;
+            case Difficulty.Hard:
+                maxTurns = maxTurns - Mathf.CeilToInt(maxTurns * 0.3f);
+                break;
+        }
+    }
+
+    public void UpdateCheckpoint()
+    {
+        currentCheckpoint = new CheckpointData
+        {
+            checkpointPosition = transform.position,
+            power = currentPower,
+            gold = gold,
+            keys = keys,
+            turns = maxTurns // Reset turns to maxTurns
+        };
     }
 
 
@@ -74,55 +128,70 @@ public class unit : MonoBehaviour
         glowHighlight.ToggleGlow();
     }
 
-    //public void DisplayImageDuringBattle(BattleImageType imageType)
-    //{
-    //    Debug.Log("DisplayImageDuringBattle called with type: " + imageType.ToString());
-    //    StartCoroutine(ShowImage(imageType));
-    //}
+    public void DisplayImageDuringBattle(BattleImageType imageType)
+    {
+        Debug.Log("DisplayImageDuringBattle called with type: " + imageType.ToString());
+        StartCoroutine(ShowImage(imageType));
+    }
 
-    //private IEnumerator ShowImage(BattleImageType imageType, Action callback = null)
-    //{
-    //    Debug.Log("ShowImage coroutine started for type: " + imageType.ToString());
+    private IEnumerator ShowImage(BattleImageType imageType, Action callback = null)
+    {
+        Debug.Log("ShowImage coroutine started for type: " + imageType.ToString());
 
-    //    // Set the correct sprite based on the image type
-    //    switch (imageType)
-    //    {
-    //        case BattleImageType.Battle:
-    //            battleImage.sprite = battleSprite;
-    //            notifText.text = $"Battling...";
-    //            notifText.gameObject.SetActive(true);
-    //            PlaySound(battleSound);
-    //            break;
-    //        case BattleImageType.Win:
-    //            battleImage.sprite = winSprite;
-    //            break;
-    //        case BattleImageType.Loss:
-    //            battleImage.sprite = lossSprite;
-    //            break;
-    //    }
+        float waitTime = displayDuration; // Default wait time
 
-    //    battleImage.gameObject.SetActive(true); // Show the image
-    //    yield return new WaitForSeconds(displayDuration); // Wait for specified duration
-    //    battleImage.gameObject.SetActive(false); // Hide the image
+        // Set the correct sprite and sound based on the image type
+        switch (imageType)
+        {
+            case BattleImageType.Battle:
+                image.sprite = battleSprite;
+                notifText.text = "Battling...";
+                PlaySound(battleSound, displayDuration);
+                break;
+            case BattleImageType.Win:
+                image.sprite = winSprite;
+                notifText.text = "You Won!";
+                PlaySound(winSound, displayDurationShort); // Assuming you have a different sound for a win
+                waitTime = displayDurationShort; // Set the wait time to the duration of the win sound
+                break;
+            case BattleImageType.Loss:
+                image.sprite = lossSprite;
+                notifText.text = "You Lost!";
+                PlaySound(lossSound, displayDurationShort); // Assuming you have a different sound for a win
+                waitTime = displayDurationShort; // Set the wait time to the duration of the win sound
+                break;
+        }
 
-    //    callback?.Invoke();
-    //}
+        image.gameObject.SetActive(true); // Show the image
+        yield return new WaitForSeconds(waitTime); // Wait for the specified duration
+        image.gameObject.SetActive(false); // Hide the image
 
-    //public enum BattleImageType
-    //{
-    //    Battle,
-    //    Win,
-    //    Loss
-    //}
+        callback?.Invoke();
+    }
 
-    //private void PlaySound(AudioClip clip)
-    //{
-    //    if (audioSource != null && clip != null)
-    //    {
-    //        audioSource.clip = clip;
-    //        audioSource.Play();
-    //    }
-    //}
+    public enum BattleImageType
+    {
+        Battle,
+        Win,
+        Loss
+    }
+
+    private void PlaySound(AudioClip clip, float duration)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.clip = clip;
+            audioSource.Play();
+            StartCoroutine(StopSoundAfterDelay(duration)); // Stop after 5 seconds
+        }
+    }
+
+    private IEnumerator StopSoundAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        audioSource.Stop();
+    }
+
 
     internal void MoveThroughoutPath(List<Vector3>currentPath)
     {
@@ -169,8 +238,9 @@ public class unit : MonoBehaviour
             yield return null;
         }
         transform.position = endPosition;
+        UpdateCurrentHex();
 
-        if(pathPositions.Count > 0)
+        if (pathPositions.Count > 0)
         {
             Debug.Log("Selecting the next position");
             StartCoroutine(RotationCoroutine(pathPositions.Dequeue(), rotationDuration));
@@ -180,19 +250,44 @@ public class unit : MonoBehaviour
             Debug.Log("Movement Finished");
             MovementFinished?.Invoke(this);
             this.currentTurns -= 1;
-            Attack(startPosition);
             Collect_Coin();
             Collect_Key();
             Visit_Tavern();
             Visit_Town();
             Rough_Sleep();
-            if (this.currentPower <= 0)
+            Attack(startPosition);
+            if (CurrentHex != null && CurrentHex.hexType == HexType.Gate)
+            {
+                if (keys > 0)
+                {
+                    keys -= 1;
+                    UpdateCheckpoint();
+                }
+                
+            }
+            if (this.lives <= 0)
             {
                 popupManager.ShowLossPopup("You Lose");
             }
 
         }
 
+    }
+
+    private void UpdateCurrentHex()
+    {
+        // Assuming each hex is centered on its GameObject's position,
+        // you can find the hex the unit is standing on by casting a ray downward
+        // or checking the collisions or triggers.
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit))
+        {
+            Hex hex = hit.collider.GetComponent<Hex>();
+            if (hex != null)
+            {
+                CurrentHex = hex;
+            }
+        }
     }
 
     private int playerStrength;
@@ -213,9 +308,9 @@ public class unit : MonoBehaviour
             if (transform.position.x == enemies[i].transform.position.x && transform.position.z == enemies[i].transform.position.z)
             {
                 // Start by displaying the Battle image
-                //StartCoroutine(ShowImage(BattleImageType.Battle, () =>
+                StartCoroutine(ShowImage(BattleImageType.Battle, () =>
 
-                //{
+                {
                     // After the Battle image is done, compute the result
                     playerStrength = this.currentPower;
                     enemyStrength = enemies[i].power;
@@ -236,7 +331,7 @@ public class unit : MonoBehaviour
                     if (playerEffectiveStrength > enemyEffectiveStrength)
                     {
                         PlayerWins();
-                        //DisplayImageDuringBattle(BattleImageType.Win);
+                        DisplayImageDuringBattle(BattleImageType.Win);
                         notifText.text = $"You DEFEATED the ENEMY!";
                         notifText.gameObject.SetActive(true);
                         enemies[i].gameObject.SetActive(false);
@@ -253,7 +348,7 @@ public class unit : MonoBehaviour
                     }
                     else
                     {
-                        //DisplayImageDuringBattle(BattleImageType.Loss);
+                        DisplayImageDuringBattle(BattleImageType.Loss);
                         EnemyWins();
                         this.currentPower = playerStrength;
                     }
@@ -262,8 +357,8 @@ public class unit : MonoBehaviour
                     {
                         popupManager.ShowLossPopup("You Lose");
                     }
-                //}));
-                //break; // exit the loop as we've found an enemy to battle
+                }));
+                break; // exit the loop as we've found an enemy to battle
             }
             else
             {
@@ -307,9 +402,22 @@ public class unit : MonoBehaviour
     private void EnemyWins()
     {
         Debug.Log("Enemy Wins!");
-        Debug.Log("Game Over for the player!");
-        // Implement logic to handle player's game over scenario
-        playerStrength = 0;
+        lives--;
+        if (lives <= 0)
+        {
+            // Trigger game over
+            Debug.Log("Game Over");
+            // Add game over logic here
+        }
+        else
+        {
+            // Reset player state to checkpoint
+            transform.position = currentCheckpoint.checkpointPosition;
+            currentPower = currentCheckpoint.power;
+            gold = currentCheckpoint.gold;
+            keys = currentCheckpoint.keys;
+            currentTurns = maxTurns; // Reset turns to maxTurns
+        }
     }
 
     private void BattleTie()
@@ -351,6 +459,8 @@ public class unit : MonoBehaviour
             {
                 this.keys += 1;
                 keys[i].gameObject.SetActive(false); //Delete key from the screen
+                StartCoroutine(popupManager.PanCameraToObject(level1Gate.gameObject));
+
             }
             else
             {
@@ -423,15 +533,9 @@ public class unit : MonoBehaviour
 
                 popupManager.ShowTownPopup();
                 return;
-
-
-
             }
         }
     }
-
-
-
 
     public void Rough_Sleep()
     {
@@ -445,27 +549,27 @@ public class unit : MonoBehaviour
                 if (currentPower > 0)
                 {
                     popupManager.ShowNoticePopup("You have no turns left, you must sleep rough to continue. This has cost you 10 power");
-
                 }
-
-
             }
             else
             {
                 popupManager.ShowNoticePopup("You have no turns left, you must sleep rough to continue. This has cost you 10 gold");
                 this.gold -= 10;
             }
-            this.currentTurns = (this.maxTurns)/2;
+            this.currentTurns = (this.maxTurns) / 2;
 
-            //popupManager.ShowNoticePopu("", (bool isConfirmed) =>
-            //{
-
-            //    if (isConfirmed)
-            //    {
-                    
-            //    }
-            //});
         }
     }
 
+
+}
+
+[Serializable]
+public class CheckpointData
+{
+    public Vector3 checkpointPosition;
+    public int power;
+    public int gold;
+    public int keys;
+    public int turns;
 }
