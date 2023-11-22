@@ -41,6 +41,10 @@ public class unit : MonoBehaviour
 
     public Hex level1Gate;
 
+    public Gates level1GateObject;
+
+    public Hex[] level1hexes;
+
     public Hex CurrentHex { get; private set; }
 
     public Image image;
@@ -262,6 +266,11 @@ public class unit : MonoBehaviour
                 {
                     keys -= 1;
                     UpdateCheckpoint();
+                    level1GateObject.gameObject.SetActive(false);
+                    for (int i = 0; i < level1hexes.Length; i++)
+                    {
+                        level1hexes[i].hexType = HexType.Default;
+                    }
                 }
                 
             }

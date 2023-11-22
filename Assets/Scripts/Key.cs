@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Key : MonoBehaviour
 {
+    public float rotateSpeed;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -15,6 +17,11 @@ public class Key : MonoBehaviour
     public void SetActive()
     {
         this.gameObject.transform.localScale = new Vector3(1, 1, 1);
+    }
+
+    private void FixedUpdate()
+    {
+        transform.Rotate(0, rotateSpeed, 0);
     }
 
 }
