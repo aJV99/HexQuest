@@ -2,19 +2,19 @@ using UnityEngine;
 
 public class BackgroundMusicController : MonoBehaviour
 {
-    private static BackgroundMusicController instance = null;
+    public static BackgroundMusicController Instance { get; private set; }
     private AudioSource audioSource;
 
     void Awake()
     {
         // Check if instance already exists and if it's not this instance, destroy it
-        if (instance != null && instance != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
-        instance = this;
+        Instance = this;
         DontDestroyOnLoad(gameObject); // Don't destroy this object when loading a new scene
 
         audioSource = GetComponent<AudioSource>();
@@ -41,6 +41,14 @@ public class BackgroundMusicController : MonoBehaviour
         {
             // Restart the music exactly after 149 seconds
             audioSource.Play();
+        }
+    }
+
+    public void ToggleMusic(bool isPlaying)
+    {
+        if (audioSource != null)
+        {
+            audioSource.enabled = isPlaying;
         }
     }
 }

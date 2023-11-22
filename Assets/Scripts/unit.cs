@@ -14,11 +14,11 @@ public class unit : MonoBehaviour
 {
     private int movementPoints = 20; //movement points of our movement
 
-    public int currentPower = 30; //power of character
+    public int currentPower = 15; //power of character
 
     public int gold = 0; //currency of player
 
-    public int keys = 1; //keys of player
+    public int keys = 0; //keys of player
 
     public int lives = 3;
 
@@ -39,11 +39,9 @@ public class unit : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
-    public Hex level1Gate;
+    public int currentLevel = 1;
 
-    public Gates level1GateObject;
-
-    public Hex[] level1hexes;
+    public LevelManager levelManager;
 
     public Hex CurrentHex { get; private set; }
 
@@ -56,7 +54,7 @@ public class unit : MonoBehaviour
     public AudioClip winSound;
     public Sprite lossSprite;
     public AudioClip lossSound;
-    private AudioSource audioSource;
+    public AudioSource battleFX;
 
     private GlowHighlight glowHighlight;//player glows so know it is selected
     private Queue<Vector3> pathPositions = new Queue<Vector3>();//give unit path it will travel
@@ -69,10 +67,10 @@ public class unit : MonoBehaviour
         image.gameObject.SetActive(false);
         notifText.gameObject.SetActive(false);
         glowHighlight = GetComponent<GlowHighlight>();
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null)
+        battleFX = GetComponent<AudioSource>();
+        if (battleFX == null)
         {
-            audioSource = gameObject.AddComponent<AudioSource>();
+            battleFX = gameObject.AddComponent<AudioSource>();
         }
         currentCheckpoint = new CheckpointData
         {
@@ -182,10 +180,10 @@ public class unit : MonoBehaviour
 
     private void PlaySound(AudioClip clip, float duration)
     {
-        if (audioSource != null && clip != null)
+        if (battleFX != null && clip != null)
         {
-            audioSource.clip = clip;
-            audioSource.Play();
+            battleFX.clip = clip;
+            battleFX.Play();
             StartCoroutine(StopSoundAfterDelay(duration)); // Stop after 5 seconds
         }
     }
@@ -193,7 +191,7 @@ public class unit : MonoBehaviour
     private IEnumerator StopSoundAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        audioSource.Stop();
+        battleFX.Stop();
     }
 
 
@@ -258,21 +256,18 @@ public class unit : MonoBehaviour
             Collect_Key();
             Visit_Tavern();
             Visit_Town();
-            Rough_Sleep();
             Attack(startPosition);
+            Rough_Sleep();
             if (CurrentHex != null && CurrentHex.hexType == HexType.Gate)
             {
                 if (keys > 0)
                 {
-                    keys -= 1;
+                    keys--;
                     UpdateCheckpoint();
-                    level1GateObject.gameObject.SetActive(false);
-                    for (int i = 0; i < level1hexes.Length; i++)
-                    {
-                        level1hexes[i].hexType = HexType.Default;
-                    }
+                    levelManager.InteractWithGate(currentLevel);
+                    currentLevel++;
                 }
-                
+
             }
             if (this.lives <= 0)
             {
@@ -316,6 +311,10 @@ public class unit : MonoBehaviour
         {
             if (transform.position.x == enemies[i].transform.position.x && transform.position.z == enemies[i].transform.position.z)
             {
+                if (this.currentTurns == 0)
+                {
+                    this.currentTurns = 1;
+                }
                 // Start by displaying the Battle image
                 StartCoroutine(ShowImage(BattleImageType.Battle, () =>
 
@@ -395,7 +394,11 @@ public class unit : MonoBehaviour
         Debug.Log("Player Wins!");
 
         float winMargin = (float)playerEffectiveStrength / enemyEffectiveStrength;
-        playerStrength += Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f); // Player loses power based on win closeness
+        if (winMargin > 1) // Ensure winMargin is greater than 1 to avoid increasing the player's strength
+        {
+            // Reduce player's strength based on how close the fight was. The easier the fight, the less reduction.
+            playerStrength -= Mathf.FloorToInt(playerStrength * (1 - 1 / winMargin) * 0.2f);
+        }
         Debug.Log($"Win Margin: {winMargin}, Player Strength Loss: {Mathf.FloorToInt(playerStrength * (1 - winMargin) * 0.2f)}");
 
         // Calculate gold reward
@@ -463,17 +466,20 @@ public class unit : MonoBehaviour
         Key[] keys = GameObject.FindObjectsOfType<Key>();
         for (int i = 0; i < keys.Length; i++)
         {
-
             if (transform.position.x == keys[i].transform.position.x && transform.position.z == keys[i].transform.position.z)
             {
                 this.keys += 1;
-                keys[i].gameObject.SetActive(false); //Delete key from the screen
-                StartCoroutine(popupManager.PanCameraToObject(level1Gate.gameObject));
+                keys[i].gameObject.SetActive(false); // Delete key from the screen
 
-            }
-            else
-            {
-                Debug.Log("No key Here");
+                Hex currentLevelGateHex = levelManager.GetCurrentLevelGateHex(currentLevel);
+                if (currentLevelGateHex != null)
+                {
+                    StartCoroutine(popupManager.PanCameraToObject(currentLevelGateHex.gameObject));
+                }
+                else
+                {
+                    Debug.LogError("Current level gate hex not found");
+                }
             }
         }
     }
@@ -499,26 +505,22 @@ public class unit : MonoBehaviour
                 }
                 else
                 {
-
-                popupManager.ShowAreYouSurePopup("Do you want to spend 10 gold to recharge your turn count?", (bool isConfirmed) =>
-                {
-                    if (!isConfirmed)
+                    popupManager.ShowAreYouSurePopup("Do you want to spend 10 gold to recharge your turn count?", (bool isConfirmed) =>
                     {
-                        Debug.Log("Popup -> NO");
-                        return;
-                    }
-                    else
-                    {
-                        Debug.Log("Popup -> YES");
+                        if (!isConfirmed)
+                        {
+                            Debug.Log("Popup -> NO");
+                            return;
+                        }
+                        else
+                        {
+                            Debug.Log("Popup -> YES");
                         
-                            this.gold -= 10;
-                            this.currentTurns = this.maxTurns;
-                    }
-                });
+                                this.gold -= 10;
+                                this.currentTurns = this.maxTurns;
+                        }
+                    });
                 }
-
-
-                //coins[i].gameObject.SetActive(false); //Delete coin from the screen
             }
             else
             {
