@@ -39,6 +39,9 @@ public class unit : MonoBehaviour
     [SerializeField]
     private PopupManager popupManager;
 
+    [SerializeField]
+    private Enemy Boss;
+
     public int currentLevel = 1;
 
     public LevelManager levelManager;
@@ -257,7 +260,7 @@ public class unit : MonoBehaviour
             Visit_Tavern();
             Visit_Town();
             Attack(startPosition);
-            Rough_Sleep();
+            
             if (CurrentHex != null && CurrentHex.hexType == HexType.Gate)
             {
                 if (keys > 0)
@@ -266,9 +269,32 @@ public class unit : MonoBehaviour
                     UpdateCheckpoint();
                     levelManager.InteractWithGate(currentLevel);
                     currentLevel++;
+                    if (currentLevel == 2)
+                    {
+                        Key[] keys = GameObject.FindObjectsOfType<Key>();
+                        for (var i = 0; i < keys.Length; i++)
+                        {
+                            if (keys[i].name == "Key2")
+                            {
+                                keys[i].SetActive();
+                                StartCoroutine(popupManager.PanCameraToObject(keys[i].gameObject));
+                            }
+                        }
+                    }
+                    if (currentLevel == 3)
+                    {
+                        StartCoroutine(popupManager.PanCameraToObject(Boss.gameObject));
+
+
+                    }
+                    if (currentTurns == 0)
+                    {
+                        currentTurns += 1;
+                    }
                 }
 
             }
+            Rough_Sleep();
             if (this.lives <= 0)
             {
                 popupManager.ShowLossPopup("You Lose");

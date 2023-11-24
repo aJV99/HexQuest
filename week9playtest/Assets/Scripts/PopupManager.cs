@@ -278,10 +278,17 @@ public class PopupManager : MonoBehaviour
         if (selectedUnit.questActive == false)
         {
             CloseTownPanel();
-            Key key = GameObject.FindFirstObjectByType<Key>();
-            key.SetActive();
+            Key[] keys = GameObject.FindObjectsOfType<Key>();
+            for(var i = 0; i < keys.Length; i++)
+            {
+                if (keys[i].name == "key1")
+                {
+                    keys[i].SetActive();
+                    StartCoroutine(PanCameraToObject(keys[i].gameObject));
 
-            StartCoroutine(PanCameraToObject(key.gameObject));
+                }
+            }
+
         }
         else
         {
