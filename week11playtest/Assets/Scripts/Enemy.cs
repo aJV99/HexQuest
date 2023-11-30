@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using TMPro;
+
+[SelectionBase]
+
 public class Enemy : MonoBehaviour
 {
     [SerializeField]

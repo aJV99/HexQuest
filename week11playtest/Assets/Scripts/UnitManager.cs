@@ -47,6 +47,21 @@ public class UnitManager : MonoBehaviour
         PrepareUnitForMovement(unitReference);
     }
 
+    public void HandleEnemySelected(GameObject Enemy)
+    {
+        if (selectedUnit == null || PlayersTurn == false)
+        {
+            return;
+        }
+
+        Hex selectedHex = hexGrid.GetTileAt(hexGrid.GetClosestHex(Enemy.transform.position));
+
+        if (HandleHexOutOfRange(selectedHex.HexCoords) || HandleSelectedHexIsUnitHex(selectedHex.HexCoords))
+            return;
+
+        HandleTargetHexSelected(selectedHex);
+    }
+
     private bool CheckIfTheSameUnitSelected(unit unitReference)
     {
         if(this.selectedUnit == unitReference)

@@ -13,6 +13,7 @@ public class SelectionManager : MonoBehaviour
     public LayerMask selectionMask;
 
     public UnityEvent<GameObject> OnUnitSelected;
+    public UnityEvent<GameObject> OnEnemySelected;
     public UnityEvent<GameObject> TerrainSelected;
 
     private void Awake()
@@ -37,6 +38,9 @@ public class SelectionManager : MonoBehaviour
             if (UnitSelected(result))
             {
                 OnUnitSelected?.Invoke(result);
+            }
+            else if (EnemySelected(result)){
+                OnEnemySelected?.Invoke(result);
             }
             else
             {
@@ -66,7 +70,10 @@ public class SelectionManager : MonoBehaviour
     {
         return result.GetComponent<unit>() != null;
     }
-
+    private bool EnemySelected(GameObject result)
+    {
+        return result.GetComponent<Enemy>() != null;
+    }
     private bool FindTarget(Vector3 mousePosition, out GameObject result)
     {
         RaycastHit hit;
