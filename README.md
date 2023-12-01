@@ -13,7 +13,7 @@ Hex Quest is a strategy game set in a medieval environment where the player navi
 ## Environment
 Created in Unity 3D Game Development v2023.1.15f1 with C-Sharp
 
-## [Play HexQuest Here](https://ajv99.github.io/HexQuest/week11playtesr/build/index.html)
+## [Play HexQuest Here](https://ajv99.github.io/HexQuest/week11playtest/build/index.html)
 
 ## How to Play
 1. **Identify Your Player**: Look for the cylinder with a green sphere above it.
