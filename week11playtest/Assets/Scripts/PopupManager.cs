@@ -11,7 +11,7 @@ public class PopupManager : MonoBehaviour
     private GameObject popupPanel;
 
     [SerializeField]
-    public OrbitCamera maincamera;
+    public CameraFollow maincamera;
 
     [SerializeField]
     private GameObject lossPanel;
@@ -27,6 +27,9 @@ public class PopupManager : MonoBehaviour
 
     [SerializeField]
     private GameObject notifPanel;
+
+    [SerializeField]
+    private TextMeshProUGUI notifText;
 
     [SerializeField]
     public TextMeshProUGUI popupText;
@@ -87,7 +90,6 @@ public class PopupManager : MonoBehaviour
 
     [SerializeField]
     public Button MainMenu;
-
 
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
@@ -214,7 +216,6 @@ public class PopupManager : MonoBehaviour
         {
             Debug.Log("increased");
             UIManager.textSize += 2;
-
         }
     }
 
@@ -284,7 +285,8 @@ public class PopupManager : MonoBehaviour
                 if (keys[i].name == "key1")
                 {
                     keys[i].SetActive();
-                    StartCoroutine(PanCameraToObject(keys[i].gameObject));
+                    notifText.text = "Get the Key to unlock the next gate";
+                    StartCoroutine(maincamera.PanCameraToObject(keys[i].gameObject));
 
                 }
             }
@@ -317,63 +319,5 @@ public class PopupManager : MonoBehaviour
     {
         townPanel.SetActive(false);
 
-    }
-
-    public IEnumerator PanCameraToObject(GameObject targetObject)
-    {
-        Debug.Log("Coroutine started: Panning to object.");
-
-        // Save the original camera position and rotation
-        Vector3 originalPosition = Camera.main.transform.position;
-        Quaternion originalRotation = Camera.main.transform.rotation;
-
-        // Calculate the target position and rotation relative to the target object
-        Vector3 targetPositionOffset = new Vector3(-7.211359f, 11.66f, -6.627083f);
-        Quaternion targetRotationOffset = Quaternion.Euler(49.971f, 47.418f, 0f);
-        Vector3 targetPosition = targetObject.transform.TransformPoint(targetPositionOffset);
-        Quaternion targetRotation = targetObject.transform.rotation * targetRotationOffset;
-
-        float timeToFocus = 1.0f; // Duration of the focus animation
-
-        // Animate camera to the target
-        float t = 0f;
-        while (t < 1.0f)
-        {
-            t += Time.deltaTime / timeToFocus;
-            Camera.main.transform.position = Vector3.Lerp(originalPosition, targetPosition, t);
-            Camera.main.transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, t);
-            yield return null;
-        }
-
-        Debug.Log("Focus on object achieved. Starting focus timer.");
-
-        // Keep the focus on the key for 2 seconds using a timer
-        float focusTimeElapsed = 0f;
-        while (focusTimeElapsed < 2.0f)
-        {
-            focusTimeElapsed += Time.deltaTime;
-            // Keep setting the camera's position and rotation to ensure it stays put.
-            Camera.main.transform.position = targetPosition;
-            Camera.main.transform.rotation = targetRotation;
-            yield return null;
-        }
-
-        Debug.Log("Focus duration ended. Returning to player.");
-
-        // Return the camera to the player
-        t = 0f; // Reset t to 0 to start the lerp for the return journey
-        while (t < 1.0f)
-        {
-            t += Time.deltaTime / timeToFocus;
-            Camera.main.transform.position = Vector3.Lerp(targetPosition, originalPosition, t);
-            Camera.main.transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, t);
-            yield return null;
-        }
-
-        // Ensure camera is exactly in the original position and rotation
-        Camera.main.transform.position = originalPosition;
-        Camera.main.transform.rotation = originalRotation;
-
-        Debug.Log("Coroutine finished: Camera returned to player.");
     }
 }

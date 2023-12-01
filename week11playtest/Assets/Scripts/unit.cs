@@ -46,6 +46,8 @@ public class unit : MonoBehaviour
 
     public LevelManager levelManager;
 
+    public CameraFollow maincamera;
+
     public Hex CurrentHex { get; private set; }
 
     public Image image;
@@ -68,7 +70,8 @@ public class unit : MonoBehaviour
     private void Awake()
     {
         image.gameObject.SetActive(false);
-        notifText.gameObject.SetActive(false);
+        notifText.gameObject.SetActive(true);
+        notifText.text = "Go to the closest Town and Accept the Quest\n*HINT*: Hover over objects and people to see what they are";
         glowHighlight = GetComponent<GlowHighlight>();
         battleFX = GetComponent<AudioSource>();
         if (battleFX == null)
@@ -150,18 +153,15 @@ public class unit : MonoBehaviour
         {
             case BattleImageType.Battle:
                 image.sprite = battleSprite;
-                notifText.text = "Battling...";
                 PlaySound(battleSound, displayDuration);
                 break;
             case BattleImageType.Win:
                 image.sprite = winSprite;
-                notifText.text = "You Won!";
                 PlaySound(winSound, displayDurationShort); // Assuming you have a different sound for a win
                 waitTime = displayDurationShort; // Set the wait time to the duration of the win sound
                 break;
             case BattleImageType.Loss:
                 image.sprite = lossSprite;
-                notifText.text = "You Lost!";
                 PlaySound(lossSound, displayDurationShort); // Assuming you have a different sound for a win
                 waitTime = displayDurationShort; // Set the wait time to the duration of the win sound
                 break;
@@ -269,6 +269,7 @@ public class unit : MonoBehaviour
                     UpdateCheckpoint();
                     levelManager.InteractWithGate(currentLevel);
                     currentLevel++;
+                    notifText.text = "Get the Key to unlock the next gate";
                     if (currentLevel == 2)
                     {
                         Key[] keys = GameObject.FindObjectsOfType<Key>();
@@ -277,13 +278,13 @@ public class unit : MonoBehaviour
                             if (keys[i].name == "Key2")
                             {
                                 keys[i].SetActive();
-                                StartCoroutine(popupManager.PanCameraToObject(keys[i].gameObject));
+                                StartCoroutine(maincamera.PanCameraToObject(keys[i].gameObject));
                             }
                         }
                     }
                     if (currentLevel == 3)
                     {
-                        StartCoroutine(popupManager.PanCameraToObject(Boss.gameObject));
+                        StartCoroutine(maincamera.PanCameraToObject(Boss.gameObject));
 
 
                     }
@@ -366,7 +367,6 @@ public class unit : MonoBehaviour
                     {
                         PlayerWins();
                         DisplayImageDuringBattle(BattleImageType.Win);
-                        notifText.text = $"You DEFEATED the ENEMY!";
                         notifText.gameObject.SetActive(true);
                         enemies[i].gameObject.SetActive(false);
                         this.currentPower = playerStrength;
@@ -496,11 +496,13 @@ public class unit : MonoBehaviour
             {
                 this.keys += 1;
                 keys[i].gameObject.SetActive(false); // Delete key from the screen
+                notifText.text = "Go to the Gate and unlock it with your Key to pass through";
+
 
                 Hex currentLevelGateHex = levelManager.GetCurrentLevelGateHex(currentLevel);
                 if (currentLevelGateHex != null)
                 {
-                    StartCoroutine(popupManager.PanCameraToObject(currentLevelGateHex.gameObject));
+                    StartCoroutine(maincamera.PanCameraToObject(currentLevelGateHex.gameObject));
                 }
                 else
                 {
