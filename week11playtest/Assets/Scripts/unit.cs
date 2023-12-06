@@ -260,7 +260,9 @@ public class unit : MonoBehaviour
             Visit_Tavern();
             Visit_Town();
             Attack(startPosition);
-            
+            Big_Boss();
+
+
             if (CurrentHex != null && CurrentHex.hexType == HexType.Gate)
             {
                 if (keys > 0)
@@ -396,7 +398,7 @@ public class unit : MonoBehaviour
             }
             else
             {
-                Debug.Log("No Enemy here");
+                //Debug.Log("No Enemy here");
             }
         }
     }
@@ -482,7 +484,7 @@ public class unit : MonoBehaviour
             }
             else
             {
-                Debug.Log("No Gold Here");
+                //Debug.Log("No Gold Here");
             }
         }
     }
@@ -552,7 +554,7 @@ public class unit : MonoBehaviour
             }
             else
             {
-                Debug.Log("You cannot enter this tavern");
+                //Debug.Log("You cannot enter this tavern");
             }
         }
     }
@@ -596,6 +598,17 @@ public class unit : MonoBehaviour
                 this.gold -= 10;
             }
             this.currentTurns = (this.maxTurns) / 2;
+
+        }
+    }
+
+    public void Big_Boss()
+    {
+        if ((transform.position.x == 44) && transform.position.z == 3.460001)
+        {
+            Debug.Log("Now in here");
+            popupManager.MiniGame();
+
 
         }
     }

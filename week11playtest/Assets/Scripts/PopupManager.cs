@@ -91,6 +91,9 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     public Button MainMenu;
 
+    [SerializeField]
+    public MiniGame BigBoss;
+
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
 
@@ -318,6 +321,15 @@ public class PopupManager : MonoBehaviour
     private void CloseTownPanel()
     {
         townPanel.SetActive(false);
+
+    }
+
+    public void MiniGame()
+    {
+        Debug.Log("In Big Boss");
+        
+        BigBoss.gameObject.SetActive(true);
+        BigBoss.Begin_Game();
 
     }
 }
