@@ -215,7 +215,7 @@ public class PopupManager : MonoBehaviour
 
     private void OnIncreaseTextClicked()
     {
-        if (UIManager.textSize < 20)
+        if (UIManager.textSize < 18)
         {
             Debug.Log("increased");
             UIManager.textSize += 2;
