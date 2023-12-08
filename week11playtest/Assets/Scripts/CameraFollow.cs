@@ -57,11 +57,11 @@ public class CameraFollow : MonoBehaviour
         if (!isPanning && !inMapView)
         {
             // Orbit functionality
-            if (Input.GetKey(KeyCode.A))
+            if (Input.GetKey(KeyCode.D))
             {
                 cameraOffset = Quaternion.AngleAxis(-rotationSpeed * Time.deltaTime, Vector3.up) * cameraOffset;
             }
-            else if (Input.GetKey(KeyCode.D))
+            else if (Input.GetKey(KeyCode.A))
             {
                 cameraOffset = Quaternion.AngleAxis(rotationSpeed * Time.deltaTime, Vector3.up) * cameraOffset;
             }
