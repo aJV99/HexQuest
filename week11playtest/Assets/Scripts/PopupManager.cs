@@ -20,6 +20,13 @@ public class PopupManager : MonoBehaviour
     private GameObject townPanel;
 
     [SerializeField]
+    private GameObject storyPanel;
+
+    [SerializeField]
+    private Button close;
+
+
+    [SerializeField]
     private TextMeshProUGUI purchaseText;
 
     [SerializeField]
@@ -33,6 +40,9 @@ public class PopupManager : MonoBehaviour
 
     [SerializeField]
     public TextMeshProUGUI popupText;
+
+    [SerializeField]
+    public TextMeshProUGUI storyText;
 
     [SerializeField]
     public TextMeshProUGUI areYouSureText;
@@ -103,6 +113,8 @@ public class PopupManager : MonoBehaviour
     {
         yesButton.onClick.AddListener(OnYesClicked);
         noButton.onClick.AddListener(OnNoClicked);
+        close.onClick.AddListener(CloseStoryPanel);
+
         okayButton.onClick.AddListener(OnOkayClicked);
         quitButton.onClick.AddListener(OnQuitClicked);
         exitButton.onClick.AddListener(CloseTownPanel);
@@ -118,6 +130,7 @@ public class PopupManager : MonoBehaviour
         ClosePopup();
         uiBar.SetActive(true);
         notifPanel.SetActive(true);
+        ShowStoryPopup();
 
 
     }
@@ -321,6 +334,22 @@ public class PopupManager : MonoBehaviour
     private void CloseTownPanel()
     {
         townPanel.SetActive(false);
+
+    }
+
+    public void ShowStoryPopup()
+    {
+        storyPanel.SetActive(true);
+        storyText.text = "Welcome Hero! Your task is to travel through these lands are claim back the Kingdom from the evil ruler who lives in his castle! You will face many challenges and enemies along your" +
+            " way, do not be detered!" +
+            " Start your journey by going to the nearest town!";
+ 
+
+    }
+
+    private void CloseStoryPanel()
+    {
+        storyPanel.SetActive(false);
 
     }
 
