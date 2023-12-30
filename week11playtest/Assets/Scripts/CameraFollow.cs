@@ -127,6 +127,64 @@ public class CameraFollow : MonoBehaviour
         isPanning = false;
     }
 
+    public IEnumerator PanCameraToObjectStory(GameObject targetObject, GameObject panel)
+    {
+        panel.SetActive(false);
+        Debug.Log("Coroutine started: Panning to object.");
+        isPanning = true;
+
+        // Save the original camera position and rotation
+        Vector3 originalPosition = transform.position;
+        Quaternion originalRotation = transform.rotation;
+
+        // Calculate the target position and rotation relative to the target object
+        Vector3 targetPositionOffset = new Vector3(-7.211359f, 11.66f, -6.627083f);
+        Quaternion targetRotationOffset = Quaternion.Euler(49.971f, 47.418f, 0f);
+        Vector3 targetPosition = targetObject.transform.TransformPoint(targetPositionOffset);
+        Quaternion targetRotation = targetObject.transform.rotation * targetRotationOffset;
+
+        float timeToFocus = 1.0f; // Duration of the focus animation
+
+        // Animate camera to the target
+        float t = 0f;
+        while (t < 1.0f)
+        {
+            t += Time.deltaTime / timeToFocus;
+            transform.position = Vector3.Lerp(originalPosition, targetPosition, t);
+            transform.rotation = Quaternion.Slerp(originalRotation, targetRotation, t);
+            yield return null;
+        }
+
+        Debug.Log("Focus on object achieved. Starting focus timer.");
+
+        // Keep the focus on the target object for 2 seconds
+        float focusTimeElapsed = 0f;
+        while (focusTimeElapsed < 2.0f)
+        {
+            focusTimeElapsed += Time.deltaTime;
+            transform.position = targetPosition;
+            transform.rotation = targetRotation;
+            yield return null;
+        }
+
+        Debug.Log("Focus duration ended. Returning to player.");
+
+        // Return the camera to the player
+        t = 0f; // Reset t to 0 for the return journey
+        while (t < 1.0f)
+        {
+            t += Time.deltaTime / timeToFocus;
+            transform.position = Vector3.Lerp(targetPosition, originalPosition, t);
+            transform.rotation = Quaternion.Slerp(targetRotation, originalRotation, t);
+            yield return null;
+        }
+
+        Debug.Log("Coroutine finished: Camera returned to player.");
+        isPanning = false;
+        panel.SetActive(true);
+
+    }
+
     private IEnumerator MoveToPosition(Vector3 targetPosition, Quaternion targetRotation, float duration)
     {
         isPanning = true;

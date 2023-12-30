@@ -25,6 +25,11 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     private Button close;
 
+    [SerializeField]
+    private GameObject Enemy;
+
+    [SerializeField]
+    private GameObject Town;
 
     [SerializeField]
     private TextMeshProUGUI purchaseText;
@@ -90,6 +95,9 @@ public class PopupManager : MonoBehaviour
     public Button SoundButton;
 
     [SerializeField]
+    public Button nextButton;
+
+    [SerializeField]
     public Button IncreaseTextSize;
 
     [SerializeField]
@@ -104,6 +112,8 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     public MiniGame BigBoss;
 
+    public string[] tutorial;
+    public int count = 0;
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
 
@@ -114,6 +124,7 @@ public class PopupManager : MonoBehaviour
         yesButton.onClick.AddListener(OnYesClicked);
         noButton.onClick.AddListener(OnNoClicked);
         close.onClick.AddListener(CloseStoryPanel);
+        nextButton.onClick.AddListener(NextTutorialPage);
 
         okayButton.onClick.AddListener(OnOkayClicked);
         quitButton.onClick.AddListener(OnQuitClicked);
@@ -130,7 +141,16 @@ public class PopupManager : MonoBehaviour
         ClosePopup();
         uiBar.SetActive(true);
         notifPanel.SetActive(true);
+        tutorial = new string[4];
+        tutorial[0] = "Welcome Hero! The Kingdom is under the control of an evil ruler..." +
+            " You must defeat him and restore peace!";
+        tutorial[1] = "There are many enemies throughout the lands, make sure you check their power and become strong before fighting them!";
+        tutorial[2] = "You can rest at towns and taverns throughout the Kingdom...for a fee of course";
+        tutorial[3] = "You must collect a key before you can progress to the next area, maybe see if anyone knows where it is at the closest town?" +
+            "Good luck!";
         ShowStoryPopup();
+        Debug.Log("story panel");
+
 
 
     }
@@ -340,12 +360,36 @@ public class PopupManager : MonoBehaviour
     public void ShowStoryPopup()
     {
         storyPanel.SetActive(true);
-        storyText.text = "Welcome Hero! Your task is to travel through these lands are claim back the Kingdom from the evil ruler who lives in his castle! You will face many challenges and enemies along your" +
-            " way, do not be detered!" +
-            " Start your journey by going to the nearest town!";
- 
+        storyText.text = tutorial[0];
+
 
     }
+
+    public void NextTutorialPage()
+    {
+        count += 1;
+        Debug.Log(count);
+
+        if (count == 3){
+            nextButton.gameObject.SetActive(false);
+        }
+        
+        if (count == 1)
+        {
+            StartCoroutine(maincamera.PanCameraToObjectStory(Enemy, storyPanel));
+
+        }
+        if (count == 2)
+        {
+
+            StartCoroutine(maincamera.PanCameraToObjectStory(Town, storyPanel));
+            
+
+
+        }
+        storyText.text = tutorial[count];
+    }
+
 
     private void CloseStoryPanel()
     {
