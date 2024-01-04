@@ -14,7 +14,7 @@ public class PopupManager : MonoBehaviour
     public CameraFollow maincamera;
 
     [SerializeField]
-    private GameObject lossPanel;
+    public GameObject lossPanel;
 
     [SerializeField]
     private GameObject townPanel;
@@ -54,6 +54,9 @@ public class PopupManager : MonoBehaviour
 
     [SerializeField]
     public TextMeshProUGUI loseText;
+
+    [SerializeField]
+    public TextMeshProUGUI winText;
 
     [SerializeField]
     public TextMeshProUGUI TownName;
@@ -112,10 +115,21 @@ public class PopupManager : MonoBehaviour
     [SerializeField]
     public MiniGame BigBoss;
 
+    [SerializeField]
+    public TextMeshProUGUI miniText;
+
+    [SerializeField]
+    public GameObject MiniOutcome;
+
     public string[] tutorial;
     public int count = 0;
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
+
+
+
+    public int test = 0;
+
 
 
     // Asign functions to buttons 
@@ -400,9 +414,41 @@ public class PopupManager : MonoBehaviour
     public void MiniGame()
     {
         Debug.Log("In Big Boss");
-        
         BigBoss.gameObject.SetActive(true);
         BigBoss.Begin_Game();
 
     }
+
+    public void MiniGameWin(string message)
+    {
+        BigBoss.gameObject.SetActive(false);
+        miniText.text = message;
+        MiniOutcome.SetActive(true);
+        StartCoroutine(HidePanelAfterDelay(10f));
+        SceneManager.LoadScene("Menu");
+    }
+
+    public void MiniGameLose(string message)
+    {
+        test = 1;
+        BigBoss.gameObject.SetActive(false);
+        miniText.text = message;
+        MiniOutcome.SetActive(true);
+        StartCoroutine(HidePanelAfterDelay(5f));
+    }
+
+    public void CloseMiniGame()
+    {
+        test = 1;
+        BigBoss.gameObject.SetActive(false);
+
+    }
+
+    IEnumerator HidePanelAfterDelay(float delayInSeconds)
+    {
+        // Wait for the specified duration
+        yield return new WaitForSeconds(delayInSeconds);
+        MiniOutcome.SetActive(false);
+    }
+
 }

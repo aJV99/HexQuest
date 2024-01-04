@@ -12,6 +12,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 public class unit : MonoBehaviour
 {
+
     private int movementPoints = 20; //movement points of our movement
 
     public int currentPower = 15; //power of character
@@ -66,9 +67,10 @@ public class unit : MonoBehaviour
 
     public event Action<unit> MovementFinished;
     private CheckpointData currentCheckpoint;
-
+    
     private void Awake()
     {
+        
         image.gameObject.SetActive(false);
         notifText.gameObject.SetActive(true);
         notifText.text = "Go to the closest Town and Accept the Quest\n*HINT*: Hover over objects and people to see what they are";
@@ -92,9 +94,8 @@ public class unit : MonoBehaviour
     public void Start()
     {
         Difficulty currentDifficulty = GlobalSettings.SelectedDifficulty;
-
         AdjustMaxTurnsBasedOnDifficulty(currentDifficulty);
-
+        
     }
 
     private void AdjustMaxTurnsBasedOnDifficulty(Difficulty difficulty)
@@ -133,6 +134,7 @@ public class unit : MonoBehaviour
 
     public void Select()
     {
+        CheckAfterGame();
         glowHighlight.ToggleGlow();
     }
 
@@ -244,7 +246,7 @@ public class unit : MonoBehaviour
         }
         transform.position = endPosition;
         UpdateCurrentHex();
-
+        
         if (pathPositions.Count > 0)
         {
             Debug.Log("Selecting the next position");
@@ -255,12 +257,14 @@ public class unit : MonoBehaviour
             Debug.Log("Movement Finished");
             MovementFinished?.Invoke(this);
             this.currentTurns -= 1;
+
             Collect_Coin();
             Collect_Key();
             Visit_Tavern();
             Visit_Town();
             Attack(startPosition);
             Big_Boss();
+            
 
 
             if (CurrentHex != null && CurrentHex.hexType == HexType.Gate)
@@ -439,7 +443,7 @@ public class unit : MonoBehaviour
         
     }
 
-    private void EnemyWins()
+    public void EnemyWins()
     {
         Debug.Log("Enemy Wins!");
         lives--;
@@ -458,6 +462,8 @@ public class unit : MonoBehaviour
             keys = currentCheckpoint.keys;
             currentTurns = maxTurns; // Reset turns to maxTurns
         }
+
+        
     }
 
     private void BattleTie()
@@ -604,16 +610,27 @@ public class unit : MonoBehaviour
 
     public void Big_Boss()
     {
-        if ((transform.position.x == 44) && transform.position.z == 3.460001)
+        Debug.Log(transform.position.x + " " + transform.position.z);
+        if ((transform.position.x == 44) && transform.position.z == 0)
         {
             Debug.Log("Now in here");
             popupManager.MiniGame();
-
-
         }
     }
 
-
+    public void CheckAfterGame()
+    {
+        Debug.Log("check after game");
+        if(popupManager.test == 1)
+        {
+            // Reset player state to checkpoint
+            transform.position = currentCheckpoint.checkpointPosition;
+            currentPower = currentCheckpoint.power;
+            gold = currentCheckpoint.gold;
+            keys = currentCheckpoint.keys;
+            currentTurns = maxTurns; // Reset turns to maxTurns
+        }
+    }
 }
 
 [Serializable]

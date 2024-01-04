@@ -7,6 +7,12 @@ using UnityEngine.UI;
 
 public class MiniGame : MonoBehaviour
 {
+    [SerializeField]
+    private PopupManager popupManager;
+
+
+    //public TextMeshProUGUI loseText;
+    //public GameObject lossPanel;
 
     private List<int> playerTaskList = new List<int>();
     private List<int> playerSequenceList = new List<int>();
@@ -30,6 +36,7 @@ public class MiniGame : MonoBehaviour
 
     public void Begin_Game()
     {
+        startButton.SetActive(true);
         //setting button colors that will be used
         buttonColors.Add(new List<Color32> { new Color32(255, 200, 200, 100), new Color32(255, 0, 0, 255) });//red
         buttonColors.Add(new List<Color32> { new Color32(255, 187, 109, 100), new Color32(255, 136, 0, 255) });//orange
@@ -49,8 +56,12 @@ public class MiniGame : MonoBehaviour
     {
         playerSequenceList.Add(buttonId);
         StartCoroutine(HighlightButton(buttonId));
+
+
         for (int i = 0; i < playerSequenceList.Count; i++)
         {
+            
+
             Debug.Log("add player sequence");
             if (playerTaskList[i] == playerSequenceList[i])
             {
@@ -58,7 +69,7 @@ public class MiniGame : MonoBehaviour
             }
             else
             {
-                StartCoroutine(PlayerLost());
+                PlayerLost();
                 return;
             }
         }
@@ -72,11 +83,9 @@ public class MiniGame : MonoBehaviour
             //checking if player won game
             if (count == 5)
             {
-                StartCoroutine(PlayerWon());
+                //StartCoroutine(PlayerWon());
+                PlayerWon();
             }
-
-
-
         }
     }
 
@@ -92,29 +101,27 @@ public class MiniGame : MonoBehaviour
         //Debug.Log("Highlighting");
         clickableButtons[buttonId].GetComponent<Image>().color = buttonColors[buttonId][1];
         //audioSource.PlayOneShot(buttonSoundList[buttonId]);
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.25f);
         clickableButtons[buttonId].GetComponent<Image>().color = buttonColors[buttonId][0];
     }
 
-    public IEnumerator PlayerLost()
+    public  void PlayerLost()
     {
         Debug.Log("Player lost");
         //audioSource.PlayOneShot(loseSound);
         playerSequenceList.Clear();
         playerTaskList.Clear();
-        yield return new WaitForSeconds(2f);
-        startButton.SetActive(true);
-        count = 0;
+        new WaitForSeconds(1f); 
+        popupManager.MiniGameLose("YOU LOST! \n You will return to your last checkpoint \n once you click on your player");
     }
 
-    public IEnumerator PlayerWon()
+    public void PlayerWon()
     {
         Debug.Log("Player Won");
-        playerSequenceList.Clear();
-        playerTaskList.Clear();
-        yield return new WaitForSeconds(2f);
-        startButton.SetActive(true);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+        //playerSequenceList.Clear();
+        //playerTaskList.Clear();
+        new WaitForSeconds(1f);
+        popupManager.MiniGameWin("YOU WON!");
     }
 
     public IEnumerator StartNextRound()
@@ -123,12 +130,12 @@ public class MiniGame : MonoBehaviour
         playerSequenceList.Clear();
         //disable buttons to stop player from keep clicking
         buttons.interactable = false;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(.5f);
         playerTaskList.Add(Random.Range(0, 4));
         foreach (int index in playerTaskList)
         {
             //Debug.Log("InHere");
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(.5f);
             yield return StartCoroutine(HighlightButton(index));
         }
         buttons.interactable = true;
