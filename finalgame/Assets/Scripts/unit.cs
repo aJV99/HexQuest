@@ -29,6 +29,8 @@ public class unit : MonoBehaviour
 
     public int maxTurns = 10; //the maximum of turns player will have after tavern
 
+    public int turnsCompleted = 0; //the maximum of turns player will have after tavern
+
     public int MovementPoints { get => movementPoints; } //gets this amount when planning path 
 
     [SerializeField]
@@ -134,7 +136,6 @@ public class unit : MonoBehaviour
 
     public void Select()
     {
-        CheckAfterGame();
         glowHighlight.ToggleGlow();
     }
 
@@ -263,7 +264,6 @@ public class unit : MonoBehaviour
             Visit_Tavern();
             Visit_Town();
             Attack(startPosition);
-            Big_Boss();
             
 
 
@@ -306,7 +306,7 @@ public class unit : MonoBehaviour
             {
                 popupManager.ShowLossPopup("You Lose");
             }
-
+            turnsCompleted += 1;
         }
 
     }
@@ -371,20 +371,24 @@ public class unit : MonoBehaviour
 
                     if (playerEffectiveStrength > enemyEffectiveStrength)
                     {
-                        PlayerWins();
-                        DisplayImageDuringBattle(BattleImageType.Win);
-                        notifText.gameObject.SetActive(true);
-                        enemies[i].gameObject.SetActive(false);
-                        this.currentPower = playerStrength;
-                        this.gold = playerGold;
                         if (enemies[i].isBoss)
-                    {   
-                        if(this.currentTurns <= 0)
                         {
-                            this.currentTurns = 1;
+                            popupManager.MiniGame();
+                            if (this.currentTurns <= 0)
+                            {
+                                this.currentTurns = 1;
+                            }
+                            //popupManager.ShowLossPopup("You Win");
                         }
-                        popupManager.ShowLossPopup("You Win");
-                    }
+                        else
+                        {
+                            PlayerWins();
+                            DisplayImageDuringBattle(BattleImageType.Win);
+                            notifText.gameObject.SetActive(true);
+                            enemies[i].gameObject.SetActive(false);
+                            this.currentPower = playerStrength;
+                            this.gold = playerGold;
+                        }
                     }
                     else
                     {
@@ -440,7 +444,9 @@ public class unit : MonoBehaviour
 
         Debug.Log($"Player has been rewarded with {goldReward} gold!");
         enemyStrength = 0; // Destroy the enemy
-        
+        CurrentHex.hexType = HexType.Default;
+
+
     }
 
     public void EnemyWins()
@@ -451,7 +457,7 @@ public class unit : MonoBehaviour
         {
             // Trigger game over
             Debug.Log("Game Over");
-            // Add game over logic here
+            popupManager.ShowLossPopup("You Lose");
         }
         else
         {
@@ -464,6 +470,23 @@ public class unit : MonoBehaviour
         }
 
         
+    }
+
+    public void ReturnToCheckpoint()
+    {
+        transform.position = currentCheckpoint.checkpointPosition;
+        currentPower = currentCheckpoint.power;
+        gold = currentCheckpoint.gold;
+        keys = currentCheckpoint.keys;
+        currentTurns = maxTurns; // Reset turns to maxTurns
+    }
+
+    public void BossWin()
+    {
+        DisplayImageDuringBattle(BattleImageType.Win);
+        notifText.gameObject.SetActive(true);
+        this.currentPower = playerStrength;
+        this.gold = playerGold;
     }
 
     private void BattleTie()
@@ -608,27 +631,28 @@ public class unit : MonoBehaviour
         }
     }
 
+    //public void Big_Boss()
+    //{
+    //    Debug.Log(transform.position.x + " " + transform.position.z);
+    //    if ((transform.position.x == 44) && (transform.position.z == 0))
+    //    {
+    //        Debug.Log("Now in here");
+    //        popupManager.MiniGame();
+    //    }
+    //}
+
     public void Big_Boss()
     {
         Debug.Log(transform.position.x + " " + transform.position.z);
-        if ((transform.position.x == 44) && transform.position.z == 0)
+
+        float epsilon = 0.01f; // Small range for comparison
+        bool isXEqual = Mathf.Abs(transform.position.x - 44) < epsilon;
+        bool isZEqual = Mathf.Abs(transform.position.z - 3.46f) < epsilon;
+
+        if (isXEqual && isZEqual)
         {
             Debug.Log("Now in here");
             popupManager.MiniGame();
-        }
-    }
-
-    public void CheckAfterGame()
-    {
-        Debug.Log("check after game");
-        if(popupManager.test == 1)
-        {
-            // Reset player state to checkpoint
-            transform.position = currentCheckpoint.checkpointPosition;
-            currentPower = currentCheckpoint.power;
-            gold = currentCheckpoint.gold;
-            keys = currentCheckpoint.keys;
-            currentTurns = maxTurns; // Reset turns to maxTurns
         }
     }
 }

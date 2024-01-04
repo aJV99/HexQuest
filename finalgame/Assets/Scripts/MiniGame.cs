@@ -111,8 +111,10 @@ public class MiniGame : MonoBehaviour
         //audioSource.PlayOneShot(loseSound);
         playerSequenceList.Clear();
         playerTaskList.Clear();
-        new WaitForSeconds(1f); 
+        new WaitForSeconds(1f);
+        buttons.interactable = true;
         popupManager.MiniGameLose("YOU LOST! \n You will return to your last checkpoint \n once you click on your player");
+
     }
 
     public void PlayerWon()
@@ -121,6 +123,7 @@ public class MiniGame : MonoBehaviour
         //playerSequenceList.Clear();
         //playerTaskList.Clear();
         new WaitForSeconds(1f);
+        buttons.interactable = true;
         popupManager.MiniGameWin("YOU WON!");
     }
 

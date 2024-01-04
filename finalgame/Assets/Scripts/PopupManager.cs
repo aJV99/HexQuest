@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using Unity.VisualScripting;
 using System.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 
 public class PopupManager : MonoBehaviour
 {
@@ -126,6 +127,8 @@ public class PopupManager : MonoBehaviour
     public delegate void PopupResponse(bool response);
     private PopupResponse callback;
 
+    public TextMeshProUGUI stats;
+
 
 
     public int test = 0;
@@ -224,7 +227,9 @@ public class PopupManager : MonoBehaviour
     // Popup for losing the game
     public void ShowLossPopup(string message)
     {
+        Enemy[] enemies = GameObject.FindObjectsOfType<Enemy>();
         loseText.text = message;
+        stats.text = "Enemies Defeated: " + (13 - enemies.Length) + "\n\nNo. of Turns Made: " + selectedUnit.turnsCompleted + "\n\nFinal Gold: " + selectedUnit.gold;
         lossPanel.SetActive(true);
     }
 
@@ -422,19 +427,25 @@ public class PopupManager : MonoBehaviour
     public void MiniGameWin(string message)
     {
         BigBoss.gameObject.SetActive(false);
-        miniText.text = message;
-        MiniOutcome.SetActive(true);
-        StartCoroutine(HidePanelAfterDelay(10f));
-        SceneManager.LoadScene("Menu");
+        ShowLossPopup("You WON! You have defeated the evil ruler and freed the lands!");
+        //miniText.text = message;
+        //MiniOutcome.SetActive(true);
+        //StartCoroutine(HidePanelAfterDelay(10f));
+
+        //SceneManager.LoadScene("Menu");
     }
 
     public void MiniGameLose(string message)
     {
-        test = 1;
-        BigBoss.gameObject.SetActive(false);
-        miniText.text = message;
-        MiniOutcome.SetActive(true);
-        StartCoroutine(HidePanelAfterDelay(5f));
+        if (selectedUnit.lives != 0)
+        {
+            test = 1;
+            BigBoss.gameObject.SetActive(false);
+            miniText.text = message;
+            MiniOutcome.SetActive(true);
+            StartCoroutine(HidePanelAfterDelay(5f));
+            selectedUnit.EnemyWins();
+        }
     }
 
     public void CloseMiniGame()
