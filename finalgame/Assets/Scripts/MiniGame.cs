@@ -111,6 +111,7 @@ public class MiniGame : MonoBehaviour
         //audioSource.PlayOneShot(loseSound);
         playerSequenceList.Clear();
         playerTaskList.Clear();
+        count = 0;
         new WaitForSeconds(1f);
         buttons.interactable = true;
         popupManager.MiniGameLose("YOU LOST! \n You will return to your last checkpoint \n once you click on your player");
